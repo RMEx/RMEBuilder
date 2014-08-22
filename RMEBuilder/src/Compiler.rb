@@ -71,7 +71,7 @@ module Compiler
     obj.dir + f
   end
   def get(obj, path)
-    filename = src(obj, path)
+    filename = Library.project_dir + src(obj, path)
     if in_dev?
       "Kernel.send(:load, '#{filename}')".dup.force_encoding('utf-8')
     else
