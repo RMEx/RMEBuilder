@@ -1,4 +1,5 @@
-
+# -*- coding: utf-8 -*-
+# Define a library
 library("RME", 'src/') do 
   
   define_version 1, 0, 0
