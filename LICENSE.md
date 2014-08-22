@@ -1,3 +1,5 @@
+>This license doesn't concern the Enterbrain binary (RPGMaker VXAce files) files.
+
 #GNU LESSER GENERAL PUBLIC LICENSE
 Version 3, 29 June 2007
 
