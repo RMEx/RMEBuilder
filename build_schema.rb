@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 
-project_directory "../Project1/"
+project_directory "Project1/"
 insert_after "Scene_Gameover"
 
 # Define a library
-library("RME", '../Example/src') do 
+library("RME", 'Example/src') do 
   
   define_version 1, 0, 0
   describe "RME is a powerful tool to improve your RPGMaker VXAce experience!"
@@ -22,3 +22,6 @@ library("RME", '../Example/src') do
 
   inline
 end
+
+# load and extern schema
+load_schema "other_schema.rb"
