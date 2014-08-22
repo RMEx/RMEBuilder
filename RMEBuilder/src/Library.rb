@@ -22,6 +22,7 @@ class Library
     attr_accessor :stack_error
     attr_accessor :project_dir
     attr_accessor :insert_after
+    attr_accessor :buffer
 
     Library::all          = Hash.new
     Library::stack_error  = Array.new
@@ -59,7 +60,7 @@ class Library
   #--------------------------------------------------------------------------
   def initialize(name, ldir, &block)
     @name         = name.dup.force_encoding('utf-8')
-    @dir          = Kernel.addslash(ldir)
+    @dir          = (Library.buffer || "") + Kernel.addslash(ldir)
     @dependencies = Hash.new
     @childs       = Hash.new
     @authors      = Hash.new
@@ -148,7 +149,7 @@ module Kernel
 
   def addslash(s)
     c = s[-1] == '/' ? '' : '/'
-    '../' + s + c
+    s + c
   end
   
   def library(name, dir, &block)
@@ -156,15 +157,18 @@ module Kernel
   end
 
   def project_directory(dir)
-    Library.project_dir ||= addslash(dir)
+    Library.project_dir ||= TARGET_DIR + addslash(dir)
   end
 
   def insert_after(n)
     Library.insert_after = n
   end
 
-  def load_schema(src)
-    Kernel.send(:require, '../'+src)
+  def load_schema(*a, src)
+    b = a[0] || './'
+    Library.buffer = TARGET_DIR + b
+    Kernel.send(:load, Library.buffer + src, true)
+    Library.buffer = nil
   end
 
 end

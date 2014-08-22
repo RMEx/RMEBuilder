@@ -73,7 +73,7 @@ module Compiler
   def get(obj, path)
     filename = src(obj, path)
     if in_dev?
-      "Kernel.send(:require, '#{filename}')".dup.force_encoding('utf-8')
+      "Kernel.send(:load, '#{filename}')".dup.force_encoding('utf-8')
     else
       File.open(filename, 'rb') { |f| f.read }.dup.force_encoding('utf-8')
     end

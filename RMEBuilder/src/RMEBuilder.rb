@@ -20,6 +20,7 @@ def current_version; version(1, 0, 0); end
 
 # Include Libs
 Kernel.send(:require, 'target.rb')
+TARGET = TARGET_DIR + TARGET_FILE
 Kernel.send(:require, 'src/VersionLabel.rb')
 Kernel.send(:require, 'src/Console.rb')
 Kernel.send(:require, 'src/Library.rb')
