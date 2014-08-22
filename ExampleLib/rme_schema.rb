@@ -1,3 +1,4 @@
+
 library("RME", 'src/') do 
   
   define_version 1, 0, 0
@@ -13,5 +14,4 @@ library("RME", 'src/') do
   add_component "RME.DocGenerator",   "DocGenerator.rb"
   add_component "RME.Documentation",  "Doc.rb"
 
-  inline
 end

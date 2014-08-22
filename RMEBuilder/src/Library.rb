@@ -54,17 +54,19 @@ class Library
   attr_reader :dir
   attr_reader :childs
   attr_reader :authors
+  attr_accessor :path
 
   #--------------------------------------------------------------------------
   # * Constructor
   #--------------------------------------------------------------------------
   def initialize(name, ldir, &block)
     @name         = name.dup.force_encoding('utf-8')
-    @dir          = (Library.buffer || "") + Kernel.addslash(ldir)
+    @dir          = ldir
     @dependencies = Hash.new
     @childs       = Hash.new
     @authors      = Hash.new
     @inline       = false
+    @path         = ''
     self.bind(&block)
     Library[name] = self
   end
@@ -120,6 +122,7 @@ class Library
   # * Links data
   #--------------------------------------------------------------------------
   def bind(&block)
+    @path = Library.buffer.dup || ''
     instance_eval(&block) if block_given?
   end
 
@@ -157,7 +160,7 @@ module Kernel
   end
 
   def project_directory(dir)
-    Library.project_dir ||= TARGET_DIR + addslash(dir)
+    Library.project_dir ||= addslash(dir)
   end
 
   def insert_after(n)
@@ -165,10 +168,8 @@ module Kernel
   end
 
   def load_schema(*a, src)
-    b = a[0] || './'
-    Library.buffer = TARGET_DIR + b
-    Kernel.send(:load, Library.buffer + src, true)
-    Library.buffer = nil
+    Library.buffer = (a[0]) ? addslash(a[0]) : ''
+    Kernel.send(:load, TARGET_DIR + Library.buffer + src, true)
   end
 
 end

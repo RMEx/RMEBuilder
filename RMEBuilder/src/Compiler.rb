@@ -19,6 +19,7 @@ module Compiler
   attr_accessor :junction
   attr_accessor :after
   attr_accessor :before
+  attr_accessor :to_project
 
   def empty_line?(o); o[1] == "" && o[2] == EMPTY; end
   def in_dev?; ARGV.include?("DEV"); end
@@ -33,7 +34,7 @@ module Compiler
     [self.max_id, "", EMPTY]
   end
   def start
-    self.output       = Library.project_dir + 'Data/Scripts.rvdata2'
+    self.output       = TARGET_DIR + Library.project_dir + 'Data/Scripts.rvdata2'
     self.source_tree  = load_data(self.output)
     self.max_id       = self.source_tree.max_by { |s| s[0] }[0]
     self.junction     = self.source_tree.index {|s| s[1] == Library.insert_after}
@@ -71,11 +72,12 @@ module Compiler
     obj.dir + f
   end
   def get(obj, path)
-    filename = Library.project_dir + src(obj, path)
+    rdir = (obj.path || "") + obj.dir
     if in_dev?
+      filename = addslash(Path.waypoint(TARGET_DIR + Library.project_dir, rdir)) + path
       "Kernel.send(:load, '#{filename}')".dup.force_encoding('utf-8')
     else
-      File.open(filename, 'rb') { |f| f.read }.dup.force_encoding('utf-8')
+      File.open(TARGET_DIR + rdir + path, 'rb') { |f| f.read }.dup.force_encoding('utf-8')
     end
   end
   def compile_lib
