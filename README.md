@@ -10,4 +10,4 @@ RPGMaker a été pensé pour que des utilisateurs sans aucune connaissance en pr
 ###Solution proposée
 Nous avons décidé d'écrire un projet RPGMaker VXAce qui automatise la génération du fichier `Scripts.rvdata2` sur la base d'un fichier de déscription qui permet de gérer des imbrication de scripts, et des dépendances. L'avantage principal (de notre point de vue) est que l'on peut se servir de l'éditeur de notre choix, et qu'il ne faut pas copier/coller sans arrêt des portions de code. Il suffit de cliquer sur un exécutable.y
 
-![Processus](http://funkywork.github.io/RMEBuilder/images/process.png)
+->![Processus](http://funkywork.github.io/RMEBuilder/images/process.png)<-
