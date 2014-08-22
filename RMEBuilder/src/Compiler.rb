@@ -74,7 +74,7 @@ module Compiler
   def get(obj, path)
     rdir = (obj.path || "") + obj.dir
     if in_dev?
-      filename = addslash(Path.waypoint(TARGET_DIR + Library.project_dir, rdir)) + path
+      filename = addslash(Path.waypoint(TARGET_DIR + Library.project_dir, TARGET_DIR + rdir)) + path
       "Kernel.send(:load, '#{filename}')".dup.force_encoding('utf-8')
     else
       File.open(TARGET_DIR + rdir + path, 'rb') { |f| f.read }.dup.force_encoding('utf-8')

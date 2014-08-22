@@ -15,6 +15,7 @@ module Path
 			elt == to[i]
 		end
 		before, after = *[from, to].map{|k| k - junc}
-		(before.map{|_| '..'} + after).join(File::SEPARATOR)
+		result = (before.map{|_| '..'} + after).join(File::SEPARATOR)
+		result
 	end
 end
