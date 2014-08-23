@@ -38,6 +38,21 @@ Mon projet
 	-Lib
 	-Builder
 ```
-Cela me permet de séparer mes bibliothèques de scripts (que je placerai dans Lib), mon Builer et mon projet RPGMaker VXAce. Cependant, vous êtes libre de choisir l'arborescence de votre choix.
+Cela me permet de séparer mes bibliothèques de scripts (que je placerai dans Lib), mon Builder et mon projet RPGMaker VXAce. Cependant, vous êtes libre de choisir l'arborescence de votre choix.
 
 ###Construction d'un schéma d'assemblage
+Pour que RMEBuilder puisse construire votre `Scripts.rvdata2`, il lui faut des informations. Par exemple par rapport au schéma, où se trouve le projet auquel il faut greffer le rvdata2, quelles bibliothèques (nous verrons plus loin qu'est ce qu'une bibliothèque) doit il inclure, après quel script faut-il insérer les bibliothèques. Etc. Pour cela, il faut créer un fichier nommé `build_schema.rb` (il doit impérativement être encodé en __UTF-8__, comme tous les scripts que vous importerez). Ce schéma, par défaut doit être placé dans le répertoire `Builder/`, cependant, il est possible de changer sa position en modifier le fichier `Builder/RMEBuilder/target.rb`. C'est dans ce fichier que nous évoquerons toutes les information de construction.
+
+####Informations minimales
+Le strict minimum des informations à fournir pour que RMEBuilder fonctionne bien sont :
+*   L'emplacement, par rapport au fichier `build_schema.rb` du répertoire où se trouve l'exécutable (`Game.exe`), soit, le répertoire du projet RPGMaker VXAce.
+*   Le nom de l'emplacement script après le quel il faudra insérer les scripts externes.
+
+Par exemple, voici comment se présente mon `build_schema.rb` à moi :
+```ruby
+# -*- coding: utf-8 -*-
+project_directory "../projectVXAce/"
+insert_after "Scene_Gameover"
+```
+La première ligne est un peu de la paranoïa de ma part, j'ajoute une anotation pour garantir que le fichier soit encodé en UTF-8. Ensuite, en me référant à l'architecture proposée plus haut, le chemin du projet VXAce et je voudrais que mes scripts s'insèrent après `Scene_Gameover`.
+Rien de très compliqué, je pense que le code est assez explicite.
