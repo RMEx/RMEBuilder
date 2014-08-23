@@ -16,4 +16,16 @@ Nous avons décidé d'écrire un projet RPGMaker VXAce qui automatise la génér
 RMEBuilder est assez facile à utiliser, nous allons voir comment nous en servir au long de cette introduction. Au delà de l'apport en confort et en facilité que l'outil apporte pour la construction de projets scriptés d'envergure, nous espérons que les scripteurs n'hésiteront pas à proposer des schémas pour rendre l'installation de leurs scripts facilement.
 
 ###Téléchargement et organisation du projet
+Vous pouvez soit clôner ce projet (pour les adepts de GIT), soit le télécharger sous forme de ZIP au moyen de [ce lien](https://github.com/funkywork/RMEBuilder/archive/master.zip). Une fois le projet récupéré, seul le répertoire `Builder/` nous intéressera.
 
+####Architecture interne
+Le répertoire `Builder/` est organisé de cette manière:
+
+*    Builder/
+     *   RMEBuilder/
+	 *   build_dev.bat
+	 *   build_prod.bat
+
+*   __RMEBuilder__ est le répertoire qui comporte les information d'exécution pour créer un `Scripts.rvdata2`. Ce répertoire n'est utile que pour ceux désireux de comprendre comment RMEBuilder a été rédigé. (Et pour changer la cible de compilation que nous verrons plus tard dans ce didacticiel);
+*   __build_dev.bat__ est l'exécutable pour construire le `Scripts.rvdata2` en mode développement (cette notion sera vue plus tard);
+*   __build_prod.bat__ est l'exécutable pour construire le `Scripts.rvdata2` en mode production (cette notion sera vue plus tard).
