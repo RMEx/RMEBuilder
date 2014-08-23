@@ -56,3 +56,9 @@ insert_after "Scene_Gameover"
 ```
 La première ligne est un peu de la paranoïa de ma part, j'ajoute une anotation pour garantir que le fichier soit encodé en UTF-8. Ensuite, en me référant à l'architecture proposée plus haut, le chemin du projet VXAce et je voudrais que mes scripts s'insèrent après `Scene_Gameover`.
 Rien de très compliqué, je pense que le code est assez explicite.
+
+####Notion et construction de bibliothèque
+Notre schéma étant initialisé, nous ne pouvons pas encore faire grand chose. Pour le rendre utile, il va falloir lui inclure des bibliothèques. Une bibliothèque est un regroupement de scripts. Par exemple, dans le contexte RME, la bibliothèque RME correspondrait à tous les scripts s'y référant.
+RMEBuilder permet d'ordonner ces bibliothèques et de les inclures dans le rvdata2.
+
+#####Construction d'une bibliothèque
