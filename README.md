@@ -29,3 +29,15 @@ Le répertoire `Builder/` est organisé de cette manière:
 *   __RMEBuilder__ est le répertoire qui comporte les information d'exécution pour créer un `Scripts.rvdata2`. Ce répertoire n'est utile que pour ceux désireux de comprendre comment RMEBuilder a été rédigé. (Et pour changer la cible de compilation que nous verrons plus tard dans ce didacticiel);
 *   __build_dev.bat__ est l'exécutable pour construire le `Scripts.rvdata2` en mode développement (cette notion sera vue plus tard);
 *   __build_prod.bat__ est l'exécutable pour construire le `Scripts.rvdata2` en mode production (cette notion sera vue plus tard).
+
+Pour installer RMEBuilder dans un projet, il suffit de copier/coller le répertoire `Builder/` dans un répertoire qui lui même contiendra un répertoire de votre projet RPGMaker VXAce.
+Généralement, j'organise mes répertoires de projets de cette manière :
+```
+Mon projet
+	-Répertoire du projet VXAce
+	-Lib
+	-Builder
+```
+Cela me permet de séparer mes bibliothèques de scripts (que je placerai dans Lib), mon Builer et mon projet RPGMaker VXAce. Cependant, vous êtes libre de choisir l'arborescence de votre choix.
+
+###Construction d'un schéma d'assemblage
