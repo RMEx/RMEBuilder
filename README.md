@@ -80,7 +80,12 @@ Ensuite, entre les accolades, on décrira des informations complémentaires à n
 	Ou alors `define_version 2` pour décrire la version `2.0.0`. Ou encore `define_version 1,2,3` pour décrire la version `1.2.3`. On peut au maximum mettre 3 nombres dans la définition d'une version. la définition d'une version permettra de créer un système d'imbrication et de dépendances. Si aucune information de version n'a été fournie, la version sera par défaut à `1.0.0`.
 
 *   __describe__ text  
-   Permet d'ajouter une déscription à une bibliothèque. Par exemple : `describe "Bibliothèque pour ajouter un système de quête au jeu!"
+   Permet d'ajouter une déscription à une bibliothèque. Par exemple : `describe "Bibliothèque pour ajouter un système de quête au jeu!"`
 
 *   __author__ name, email
+    Cette commande permet d'ajouter un auteur à la bibliothèque. On peut en ajouter autant que l'on en souhaite. Le paramètre `email` n'est pas obligatoire.
+
+> `describe` et `author` sont des commandes qui agissent à la génération du script, un en-tête est ajouté avec une description de la bibliothèque et la liste des auteurs, si il y en as.
+
+*   __add_component name, file__  
 	
