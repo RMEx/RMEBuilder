@@ -87,5 +87,32 @@ Ensuite, entre les accolades, on décrira des informations complémentaires à n
 
 > `describe` et `author` sont des commandes qui agissent à la génération du script, un en-tête est ajouté avec une description de la bibliothèque et la liste des auteurs, si il y en as.
 
-*   __add_component name, file__  
+*   __add_component__ name, file
+    C'est un peu le coeur du module de bibliothèque. Il s'agit de l'ajout d'un fichier à inclure dans la bibliothèque. On peut en mettre autant que l'on veut. On leur donne un nom (qui sera le nom affiché dans l'emplacement dans script) et le chemin pour accéder au fichier. Ce chemin est relatif au chemin défini par l'argument `folder` dans la définition de la bibliothèque. Lors de la génération du rvdata2, les "components" seront insérés par d'ordre d'ajout. Par exemple :
+	```ruby
+	project_directory "project/"
+	insert_after "Scene_Gameover"
+
+	# Define a library
+	library("RME", 'Lib/RME/src'){ 
+	
+ 	  define_version 1, 0, 0
+	  describe "RME is a powerful tool to improve your RPGMaker VXAce experience!"
+
+	  add_author "Nuki", "xaviervdw@gmail.com"
+	  add_author "Hiino"
+	  add_author "Raho"
+	  add_author "Grim", "grimfw@gmail.com"
+
+	  add_component "RME.SDK",            "SDK.rb"
+	  add_component "RME.EvEx",           "EvEx.rb"
+	  add_component "RME.DocGenerator",   "DocGenerator.rb"
+	  add_component "RME.Documentation",  "Doc.rb"
+
+	}
+	```
+	Voici un build_schema pour construire la version actuelle de RME.
+
+*   __add_dependency__ name, version
+    C
 	
