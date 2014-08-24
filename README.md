@@ -145,4 +145,10 @@ Ensuite, entre les accolades, on décrira des informations complémentaires à n
 	}
 	```
 	Cette proposition de compilation fonctionnera car `RME 1.0.0` est installé. Si j'avais demandé comme dépendance `add_dependency "RME", vsn(1,0,2)` par exemple, la compilation aurait échouée.
+
+*   __inline__
+    Il s'agit d'un simple attribut, qui ajouté dans la déscription de la bibliothèque, indique que toute la bibliothèque va être compressée en un seul emplacement script dans l'éditeur de script. Sans cet argument, chaque `component` du script est répartit dans un emplacement.
+
+####Externalisation des bibliothèques
+
 	
