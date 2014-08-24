@@ -74,7 +74,13 @@ library(name, folder){
 Concrètement, on décrit une bibliothèque par son nom et par l'endroit où se trouvent les fichiers sources. Par exemple `Lib/UneLib/src/`.
 Ensuite, entre les accolades, on décrira des informations complémentaires à notre bibliothèque.
 
-*   __define_version__ a, b, c
+*   __define_version__ a, b, c  
     Permet de définir une version pour la bibliothèque. Par exemple :
-	`define_version 1, 2` pour décrire la version `1.2`.
-	Ou alors `define_version 2` pour décrire la version `2.0`. Ou encore `define_version 1,2,3` pour décrire la version `1.2.3`. On peut au maximum mettre 3 nombres dans la définition d'une version.
+	`define_version 1, 2` pour décrire la version `1.2.0`.
+	Ou alors `define_version 2` pour décrire la version `2.0.0`. Ou encore `define_version 1,2,3` pour décrire la version `1.2.3`. On peut au maximum mettre 3 nombres dans la définition d'une version. la définition d'une version permettra de créer un système d'imbrication et de dépendances. Si aucune information de version n'a été fournie, la version sera par défaut à `1.0.0`.
+
+*   __describe__ text  
+   Permet d'ajouter une déscription à une bibliothèque. Par exemple : `describe "Bibliothèque pour ajouter un système de quête au jeu!"
+
+*   __author__ name, email
+	
