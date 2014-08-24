@@ -82,12 +82,12 @@ Ensuite, entre les accolades, on décrira des informations complémentaires à n
 *   __describe__ text  
    Permet d'ajouter une déscription à une bibliothèque. Par exemple : `describe "Bibliothèque pour ajouter un système de quête au jeu!"`
 
-*   __author__ name, email
+*   __author__ name, email  
     Cette commande permet d'ajouter un auteur à la bibliothèque. On peut en ajouter autant que l'on en souhaite. Le paramètre `email` n'est pas obligatoire.
 
 > `describe` et `author` sont des commandes qui agissent à la génération du script, un en-tête est ajouté avec une description de la bibliothèque et la liste des auteurs, si il y en as.
 
-*   __add_component__ name, file
+*   __add_component__ name, file  
     C'est un peu le coeur du module de bibliothèque. Il s'agit de l'ajout d'un fichier à inclure dans la bibliothèque. On peut en mettre autant que l'on veut. On leur donne un nom (qui sera le nom affiché dans l'emplacement dans script) et le chemin pour accéder au fichier. Ce chemin est relatif au chemin défini par l'argument `folder` dans la définition de la bibliothèque. Lors de la génération du rvdata2, les "components" seront insérés par d'ordre d'ajout. Par exemple :
 	```ruby
 	project_directory "project/"
@@ -113,6 +113,36 @@ Ensuite, entre les accolades, on décrira des informations complémentaires à n
 	```
 	Voici un build_schema pour construire la version actuelle de RME.
 
-*   __add_dependency__ name, version
-    C
+*   __add_dependency__ name, version  
+   Cette commande permet d'obliger la présence d'une autre bibliothèque pour fonctionner. Son premier argument est une chaine de caractères du nom de la bibliothèque requise, le deuxième (pouvant être ommis) est la version. Par défaut, la version vaut `1.0`. On peut ajouter autant de dépendances que l'on veut. Par exemple :
+   
+   ```ruby
+	project_directory "project/"
+	insert_after "Scene_Gameover"
+
+	# Define a library
+	library("RME", 'Lib/RME/src'){ 
+	
+ 	  define_version 1, 0, 0
+	  describe "RME is a powerful tool to improve your RPGMaker VXAce experience!"
+
+	  add_author "Nuki", "xaviervdw@gmail.com"
+	  add_author "Hiino"
+	  add_author "Raho"
+	  add_author "Grim", "grimfw@gmail.com"
+
+	  add_component "RME.SDK",            "SDK.rb"
+	  add_component "RME.EvEx",           "EvEx.rb"
+	  add_component "RME.DocGenerator",   "DocGenerator.rb"
+	  add_component "RME.Documentation",  "Doc.rb"
+
+	}
+
+	library('Test', 'Lib/Test/src'){
+	  describe "Un petit test"
+	  add_component "Test de script", "test.rb"
+	  add_dependency "RME", vsn(1,0,0)
+	}
+	```
+	Cette proposition de compilation fonctionnera car `RME 1.0.0` est installé. Si j'avais demandé comme dépendance `add_dependency "RME", vsn(1,0,2)` par exemple, la compilation aurait échouée.
 	
