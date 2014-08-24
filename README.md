@@ -18,6 +18,7 @@ RMEBuilder est assez facile à utiliser, nous allons voir comment nous en servir
 ###Téléchargement et organisation du projet
 Vous pouvez soit clôner ce projet (pour les adepts de GIT), soit le télécharger sous forme de ZIP au moyen de [ce lien](https://github.com/funkywork/RMEBuilder/archive/master.zip). Une fois le projet récupéré, seul le répertoire `Builder/` nous intéressera.
 
+
 ####Architecture interne
 Le répertoire `Builder/` est organisé de cette manière:
 
@@ -150,5 +151,33 @@ Ensuite, entre les accolades, on décrira des informations complémentaires à n
     Il s'agit d'un simple attribut, qui ajouté dans la déscription de la bibliothèque, indique que toute la bibliothèque va être compressée en un seul emplacement script dans l'éditeur de script. Sans cet argument, chaque `component` du script est répartit dans un emplacement.
 
 ####Externalisation des bibliothèques
+Un des objectifs de RMEBuilder, est aussi de permettre de la modularité dans l'ajout/suppression de scripts. Pour éviter de rendre le fichier de schéma trop lourd, il est possible de créer une bibliothèque dans un fichier externe. Et dans l'inclure dans le schéma. Par exemple, imaginons que RME se trouve dans `Lib/RME/src`. Nous pourrions écrire un schéma `RMESchema.rb` dans `Lib/RME/` :
 
+```ruby
+library("RME", 'src'){ 
 	
+	define_version 1, 0, 0
+	describe "RME is a powerful tool to improve your RPGMaker VXAce experience!"
+
+	add_author "Nuki", "xaviervdw@gmail.com"
+	add_author "Hiino"
+	add_author "Raho"
+	add_author "Grim", "grimfw@gmail.com"
+
+	add_component "RME.SDK",            "SDK.rb"
+	add_component "RME.EvEx",           "EvEx.rb"
+	add_component "RME.DocGenerator",   "DocGenerator.rb"
+	add_component "RME.Documentation",  "Doc.rb"
+
+}
+```
+
+Et notre `build_schema.rb` :
+
+```ruby
+project_directory "project/"
+insert_after "Scene_Gameover"
+load_schema 'Lib/RME/', 'RMESchema.rb'
+```
+
+Comme vous pouvez le voir, le `folder` de la bibliothèque est relatif au schéma qui l'appelle. la fonction `load_schema` prend deux arguments. Le premier étant le répertoire où se trouve le schéma, le second étant le nom du schéma. Il est possible d'ommettre le premier argument si le schéma à charger se trouve dans le même répertoire.
