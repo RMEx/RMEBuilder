@@ -62,3 +62,14 @@ Notre schéma étant initialisé, nous ne pouvons pas encore faire grand chose. 
 RMEBuilder permet d'ordonner ces bibliothèques et de les inclures dans le rvdata2.
 
 #####Construction d'une bibliothèque
+Pour construire (ou référencer) une bibliothèque, il suffit d'ajouter dans votre
+fichier `build_schema.rb` une description de bibliothèque. Voici son schéma:
+
+```ruby
+library(name, folder){
+	# Ici se placera le contenu de votre bibliothèque
+}
+```
+
+Concrètement, on décrit une bibliothèque par son nom et par l'endroit où se trouvent les fichiers sources. Par exemple `Lib/UneLib/src/`.
+Ensuite, entre les accolades, on décrira des informations complémentaires à notre bibliothèque. 
