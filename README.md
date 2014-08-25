@@ -181,3 +181,15 @@ load_schema 'Lib/RME/', 'RMESchema.rb'
 ```
 
 Comme vous pouvez le voir, le `folder` de la bibliothèque est relatif au schéma qui l'appelle. la fonction `load_schema` prend deux arguments. Le premier étant le répertoire où se trouve le schéma, le second étant le nom du schéma. Il est possible d'ommettre le premier argument si le schéma à charger se trouve dans le même répertoire.
+
+###Compilation d'un rvdata2
+Cette procédure, une fois que les schémas sont construits, est la plus simple. !
+> Attention, pour que les modifications soient prises en compte, il faut impérativement que votre projet RPGMaker ne soit pas ouvert dans l'éditeur (hélas, RPG Maker, charge le rvdata2 et ne le transforme qu'à l'exécution ou à fermeture du projet). Vos fichiers à compiler doivent aussi être encodés en UTF-8.
+
+Vous disposez de deux exécutables. `build_dev.bat` et `build_prod.bat`. La différence entre les deux est assez sensible. En effet, `build_dev.bat` produira un rvdata2 qui lira a l'exécution les scripts, donc une fois le rvdata2 produit, vous pouvez, que votre projet soit ouvert ou non, modifier vos fichiers. `build_prod.bat` produira le rvdata2 final, incluant tous les scripts dans le fichier. Donc quand vous êtes en développement, je vous conseille d'utiliser `build_dev` et au moment de la diffusion, `build_prod`. Sachant que l'on peut switcher d'un mode à l'autre.
+
+###A propos de la génération du fichier
+La génération du fichier rvdata est assez intelligente. En effet, cette dernière s'insère de manière assez intelligente, supprimant les doublons (via le nom). Donc vous pouvez insérer vos scripts à la même manière que d'habitude et vous servir de RMEBuilder pour l'ajout de bibliothèque.
+
+##Fantasmes pour le futur
+Idéalement, j'aimerais que RMEBuilder ne servent pas qu'aux développeurs pour la constructions de bibliothèques mais aussi aux makers pour faciliter l'installation de leurs bibliothèques ! Bonne utilisation
