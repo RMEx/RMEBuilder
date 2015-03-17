@@ -57,10 +57,10 @@ class Package
         full_name = repo + c_name
         init_uri  = pkg[:uri].clone
         init_uri  << c_name
-        p init_uri.uri(true)
         File.open(full_name, 'w') { |f| f.write(init_uri.get) }
       end
-      gets
+      Package.installed << name
+      File.open(REP_TRACE, 'w') { |f| f.write(Package.installed.to_s)}
     end
 
   end

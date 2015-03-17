@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 SRC_PATH  = '../src'
 REP_PATH  = '../.local'
 REP_LIST  = REP_PATH + '/list.rb'
+REP_TRACE = REP_PATH + '/trace.rb'
 
 # Inner modules
 Kernel.send(:require, SRC_PATH+'/utils.rb')
