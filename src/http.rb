@@ -33,16 +33,16 @@ module Http
   HttpQueryDataAvailable  = Win32API.new('winhttp','WinHttpQueryDataAvailable', 'pi', 'i')
   HttpReadData            = Win32API.new('winhttp','WinHttpReadData','ppip','i')
   HttpCloseHandle         = Win32API.new('winhttp','WinHttpCloseHandle', 'p','i')
-  ConnectionState         = Win32API.new('wininet', 'InternetGetConnectedState', 'ii', 'i')
+  ConnectionState         = Win32API.new('wininet','InternetGetConnectedState', 'ii', 'i')
 
   # Exception
-  class HttpOpenException < Exception; end
-  class HttpConnectException < Exception; end
-  class HttpOpenRequestException < Exception; end
-  class HttpSendException < Exception; end
-  class HttpReceiveException < Exception; end
-  class HttpQueryException < Exception; end
-  class HttpRead < Exception; end
+  Utils.define_exception :HttpOpenException
+  Utils.define_exception :HttpConnectException
+  Utils.define_exception :HttpOpenRequestException
+  Utils.define_exception :HttpSendException
+  Utils.define_exception :HttpReceiveException
+  Utils.define_exception :HttpQueryException
+  Utils.define_exception :HttpRead
 
   class << self
 
@@ -51,19 +51,19 @@ module Http
     end
 
     def open
-      result = HttpOpen.call('', 0, '', '', 0)
-      raise HttpOpenException unless result
-      result
+      session = HttpOpen.call('', 0, '', '', 0)
+      raise HttpOpenException unless session
+      session
     end
 
     def connect(opened, prefix, port)
-      result = HttpConnect.call(opened, prefix.to_ws, port, 0)
-      raise HttpConnectException unless result
-      result
+      connection = HttpConnect.call(opened, prefix.to_ws, port, 0)
+      raise HttpConnectException unless connection
+      connection
     end
 
     def open_request(connected, path)
-      result = HttpOpenRequest.call(
+      request = HttpOpenRequest.call(
         connected,
         'GET'.to_ws,
         path.to_ws,
@@ -72,26 +72,24 @@ module Http
          0,
          0x00800000
       )
-      raise HttpOpenRequestException unless result
-      result
+      raise HttpOpenRequestException unless request
+      request
     end
 
     def send_request(opened_request)
-      result = HttpSendRequest.call(opened_request, 0, 0, 0, 0, 0, 0)
-      raise HttpSendException unless result
-      result
+      sender = HttpSendRequest.call(opened_request, 0, 0, 0, 0, 0, 0)
+      raise HttpSendException unless sender
+      sender
     end
 
     def receive_response(opened_request)
-      result = HttpReceiveResponse.call(opened_request, nil)
-      raise HttpReceiveException unless result
-      result
+      reception = HttpReceiveResponse.call(opened_request, nil)
+      raise HttpReceiveException unless reception
+      reception
     end
 
     def query_available?(opened_request)
-      result = HttpQueryDataAvailable.call(opened_request, 0)
-      raise HttpQueryException unless result
-      result
+      HttpQueryDataAvailable.call(opened_request, 0)
     end
 
   end
@@ -115,14 +113,14 @@ module Http
       @variables = {}
     end
 
-    def set_variable(varname, value)
-      @variables[varname] = value
+    def set_variable(name, value)
+      @variables[name] = value
     end
 
     alias_method(:[]=, :set_variable)
     alias_method(:build_query, :variables=)
 
-    def complete_path(prefix = '')
+    def base_uri(prefix = '')
       path    = @path.join('/')
       prefix  += '/' unless path == ''
       prefix  += path
@@ -135,43 +133,45 @@ module Http
     end
 
     def uri(complete = false)
-      result      = ""
+      uri_str     = ""
       if complete
         protocol  = PROTOCOL[@port] || :http
-        result    = "#{protocol}://"
+        uri_str   = "#{protocol}://"
       end
-      result      += prefix
+      uri_str     += prefix
       if !PROTOCOL.keys.include?(@port) && complete
-        result    += ":#{@port}"
+        uri_str   += ":#{@port}"
       end
-      complete_path(result)
+      base_uri(uri_str)
     end
 
     def process_query
-      result      = ""
       opened      = Http.open
       connection  = Http.connect(opened, @prefix, @port)
-      request     = Http.open_request(connection, complete_path)
-      Http.send_request(request)
-      Http.receive_response(request)
-      if Http.query_available?(request)
-        buffer = [].pack("x#{Utils.max_request_size}")
-        output = [].pack('x4')
-        HttpReadData.call(request, buffer, Utils.max_request_size, output)
-        len = output.unpack('i!')[0]
-        result = buffer[0, len]
-      end
+      request     = Http.open_request(connection, base_uri)
+      response    = yield(request) if block_given?
       HttpCloseHandle.call(opened)
       HttpCloseHandle.call(connection)
       HttpCloseHandle.call(request)
       clean
-      result
+      response
     end
     private :process_query
 
     # Process an HTTP request on the service
     def get
-      process_query
+      process_query do |request|
+        Http.send_request(request)
+        Http.receive_response(request)
+        if Http.query_available?(request)
+          buffer = [].pack("x#{Utils.max_request_size}")
+          output = [].pack('x4')
+          HttpReadData.call(request, buffer, Utils.max_request_size, output)
+          len = output.unpack('i!')[0]
+          return buffer[0, len]
+        end
+        raise HttpQueryException
+      end
     end
 
   end

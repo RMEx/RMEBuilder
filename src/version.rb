@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 =begin
-RMEBuilder - Main
+RMEBuilder - Version
 Copyright (C) 2015 Nuki <xaviervdw AT gmail DOT com>
 
 This library is free software; you can redistribute it and/or
@@ -16,20 +16,44 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
-# Source folder
-SRC_PATH  = '../src'
-REP_PATH  = '../.local'
 
-# Inner modules
-Kernel.send(:require, SRC_PATH+'/utils.rb')
-Utils.load('console.rb')
-Utils.load('http.rb')
-Utils.load('version.rb')
-Utils.load('library.rb')
-Utils.load('initialize.rb')
+class UnboundVersionException < Exception; end
 
-# Define destination folder
-Utils.load('../target.rb')
-def folder_target; '../'+TARGET.addSlash; end
-def build_schema; folder_target + SCHEMA; end
-Utils.load(build_schema)
+class Version < Struct.new(:major, :sub, :last)
+
+  def to_s
+    "v #{major}.#{sub}.#{last}"
+  end
+
+  def compare(oth)
+    raise UnboundVersionException unless oth.is_a?(Version)
+    return -1 if oth.major  > major
+    return  1 if oth.major  < major
+    return -1 if oth.sub    > sub
+    return  1 if oth.sub    < sub
+    return -1 if oth.last   > last
+    return  1 if oth.last   < last
+    return  0
+  end
+
+  def ==(oth)
+    compare(oth) == 0
+  end
+
+  def >(oth)
+    compare(oth) > 0
+  end
+
+  def <(oth)
+    compare(oth) < 0
+  end
+
+  def >=(oth)
+    compare(oth) >= 0
+  end
+
+  def <=(oth)
+    compare(oth) <= 0
+  end
+
+end

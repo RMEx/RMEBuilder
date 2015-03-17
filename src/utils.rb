@@ -53,4 +53,8 @@ module Utils
     102400
   end
 
+  def define_exception(exception_name)
+    Object.const_set(exception_name, Class.new(Exception))
+  end
+
 end
