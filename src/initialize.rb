@@ -40,3 +40,6 @@ unless Dir.exist?(REP_PATH)
   # Syncronize
   Sync.from_funkywork
 end
+
+# Load the repositories list
+Utils.load(REP_PATH.addSlash + 'list.rb')

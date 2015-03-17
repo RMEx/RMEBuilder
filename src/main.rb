@@ -20,22 +20,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 SRC_PATH  = '../src'
 REP_PATH  = '../.local'
 
-Kernel.send(:require, SRC_PATH+'/utils.rb')
 # Inner modules
+Kernel.send(:require, SRC_PATH+'/utils.rb')
 Utils.load('console.rb')
 Utils.load('http.rb')
-
 Utils.load('initialize.rb')
-
 
 # Define destination folder
 Utils.load('../target.rb')
-def folder_target
-  '../'+TARGET.addSlash
-end
-
-def build_schema
-  folder_target + SCHEMA
-end
-
+def folder_target; '../'+TARGET.addSlash; end
+def build_schema; folder_target + SCHEMA; end
 Utils.load(build_schema)
