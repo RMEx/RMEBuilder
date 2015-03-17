@@ -29,8 +29,11 @@ class Package
 
     def from_list
       list =
-        Packages.list.map do |name, args|
-          [name, {uri: Http.service_with(args[0]), schema: args[1]}]
+        Packages.list.map do |name, url|
+          args    = url.split('/')
+          schema  = args.pop
+          uri     = args.join('/')
+          [name, {uri: Http.service_with(uri), schema: schema}]
         end
       Package.all = Hash[list]
     end
@@ -45,6 +48,7 @@ class Package
     end
 
     def install(name)
+      p "Download #{name}"
       repo        = (REP_PATH.addSlash + name).addSlash
       Dir.mkdir(repo)
       pkg         = Package.all[name]
@@ -58,9 +62,11 @@ class Package
         init_uri  = pkg[:uri].clone
         init_uri  << c_name
         File.open(full_name, 'w') { |f| f.write(init_uri.get) }
+        p "#{full_name} installed"
       end
       Package.installed << name
       File.open(REP_TRACE, 'w') { |f| f.write(Package.installed.to_s)}
+      p "#{name} is installed"
     end
 
   end

@@ -58,7 +58,7 @@ module Utils
 
   # Return max request size
   def max_request_size
-    102400
+    1024000
   end
 
   def define_exception(exception_name)
