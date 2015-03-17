@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 =begin
-RMEBuilder - Version
+RMEBuilder - Package
 Copyright (C) 2015 Nuki <xaviervdw AT gmail DOT com>
 
 This library is free software; you can redistribute it and/or
@@ -16,52 +16,42 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
+class Package
 
-class UnboundVersionException < Exception; end
+  class << self
 
-class Version < Struct.new(:major, :sub, :last)
+    attr_accessor :all
 
-  def to_s
-    "v #{major}.#{sub}.#{last}"
-  end
-
-  def compare(oth)
-    raise UnboundVersionException unless oth.is_a?(Version)
-    return -1 if oth.major  > major
-    return  1 if oth.major  < major
-    return -1 if oth.sub    > sub
-    return  1 if oth.sub    < sub
-    return -1 if oth.last   > last
-    return  1 if oth.last   < last
-    return  0
-  end
-
-  def ==(oth)
-    compare(oth) == 0
-  end
-
-  def >(oth)
-    compare(oth) > 0
-  end
-
-  def <(oth)
-    compare(oth) < 0
-  end
-
-  def >=(oth)
-    compare(oth) >= 0
-  end
-
-  def <=(oth)
-    compare(oth) <= 0
-  end
-
-end
-
-module Kernel
-
-    def vsn(a = 1, b = 0, c = 0)
-      Version.new(a, b, c)
+    def from_list
+      list =
+        Packages.list.map do |name, args|
+          [name, {uri: Http.service_with(args[0]), schema: args[1]}]
+        end
+      Package.all = Hash[list]
     end
+
+  end
+
+  p from_list
+  gets
+
+  attr_accessor :name
+  attr_accessor :version
+  attr_accessor :components
+  attr_accessor :dependancies
+  attr_accessor :description
+  attr_accessor :authors
+  attr_accessor :uri
+  attr_accessor :schema
+
+  def initialize(hash)
+    @name         = hash[:name]
+    @version      = hash[:version]      || vsn
+    @components   = hash[:components]   || {}
+    @dependancies = hash[:dependancies] || []
+    @authors      = hash[:authors]      || {}
+    @description  = hash[:description]  || ""
+  end
+
 
 end

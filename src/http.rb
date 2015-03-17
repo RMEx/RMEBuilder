@@ -92,6 +92,25 @@ module Http
       HttpQueryDataAvailable.call(opened_request, 0)
     end
 
+    def service_with(str)
+      protocol, rest  = str.split('://')
+      rest, protocol  = protocol, 'http' unless rest
+      protocol        = protocol.to_sym
+      rest, vars      = rest.split('?')
+      vars            ||= ""
+      vars            = vars.split('&').map {|k| k.split('=')}
+      prefix, *path   = rest.split('/')
+      path, prefix    = prefix, [] unless path
+      prefix, port    = prefix.split(':')
+      port            ||= PROTOCOL.key(protocol)
+      Http::Service.new(
+        prefix: prefix,
+        path: path,
+        port: port.to_i,
+        variables: vars
+      )
+    end
+
   end
 
   # Represent a callable HTTP service
@@ -106,7 +125,7 @@ module Http
       @prefix     = hash[:prefix]
       @path       = hash[:path] || []
       @port       = hash[:port] || 80
-      clean
+      @variables  = hash[:variables] || {}
     end
 
     def clean
@@ -119,6 +138,12 @@ module Http
 
     alias_method(:[]=, :set_variable)
     alias_method(:build_query, :variables=)
+
+    def add_directory(name)
+      @path << name
+    end
+
+    alias_method(:<<, :add_directory)
 
     def base_uri(prefix = '')
       path    = @path.join('/')

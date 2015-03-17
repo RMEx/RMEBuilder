@@ -19,14 +19,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 # Source folder
 SRC_PATH  = '../src'
 REP_PATH  = '../.local'
+REP_LIST  = REP_PATH + '/list.rb'
 
 # Inner modules
 Kernel.send(:require, SRC_PATH+'/utils.rb')
 Utils.load('console.rb')
 Utils.load('http.rb')
 Utils.load('version.rb')
-Utils.load('library.rb')
 Utils.load('initialize.rb')
+Utils.load(REP_LIST)
+Utils.load('package.rb')
 
 # Define destination folder
 Utils.load('../target.rb')
