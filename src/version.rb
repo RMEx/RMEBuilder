@@ -17,7 +17,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
 
-class UnboundVersionException < Exception; end
+Utils.define_exception :UnboundVersionException
 
 class Version < Struct.new(:major, :sub, :last)
 

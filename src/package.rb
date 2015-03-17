@@ -16,11 +16,16 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
+Utils.define_exception :UnboundPackage
+
+
 class Package
 
   class << self
 
     attr_accessor :all
+    attr_accessor :installed
+    attr_accessor :insert_after
 
     def from_list
       list =
@@ -30,10 +35,35 @@ class Package
       Package.all = Hash[list]
     end
 
-  end
+    def add(name)
+      Package.from_list
+      Package.installed ||= []
+      unless Package.all.has_key?(name)
+        raise UnboundPackage, "Unknown package #{name}"
+      end
+      install(name) unless Dir.exist?(REP_PATH.addSlash + name)
+    end
 
-  p from_list
-  gets
+    def install(name)
+      repo        = (REP_PATH.addSlash + name).addSlash
+      Dir.mkdir(repo)
+      pkg         = Package.all[name]
+      schema_uri  = pkg[:uri].clone
+      schema_uri  << pkg[:schema]
+      schema_ctn  = schema_uri.get
+      File.open(repo+pkg[:schema], 'w') { |f| f.write(schema_ctn) }
+      pkg_data    = eval(schema_ctn)
+      pkg_data.components.each do |c_name|
+        full_name = repo + c_name
+        init_uri  = pkg[:uri].clone
+        init_uri  << c_name
+        p init_uri.uri(true)
+        File.open(full_name, 'w') { |f| f.write(init_uri.get) }
+      end
+      gets
+    end
+
+  end
 
   attr_accessor :name
   attr_accessor :version
@@ -52,6 +82,12 @@ class Package
     @authors      = hash[:authors]      || {}
     @description  = hash[:description]  || ""
   end
+end
 
+module Kernel
+
+  def add_package(name)
+    Package.add(name)
+  end
 
 end

@@ -128,6 +128,15 @@ module Http
       @variables  = hash[:variables] || {}
     end
 
+    def clone
+      Service.new(
+        prefix: @prefix.dup,
+        path: @path.dup,
+        port: @port,
+        variables: @variables.dup
+      )
+    end
+
     def clean
       @variables = {}
     end
