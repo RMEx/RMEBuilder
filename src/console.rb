@@ -23,6 +23,7 @@ module Console
   SetTitle  = Win32API.new('kernel32','SetConsoleTitleA','p','s')
   Get       = Win32API.new('kernel32','GetConsoleWindow', 'v', 'l')
   Find      = Win32API.new('user32', 'FindWindowA', 'pp', 'i')
+  SetCursor = Win32API.new('kernel32', 'SetConsoleCursorPosition', 'lp', 'l')
   Handle    = Find.call('RGSS Player', 0)
 
   extend self
@@ -40,21 +41,25 @@ module Console
   end
 
   def gets
-      SetFG.call(Get.call)
-      $stdin.gets
+    SetFG.call(Get.call)
+    $stdin.gets
+  end
+
+  def clear
+    system('cls')
   end
 
 end
 
 module Kernel
 
-    def p(*args)
-      Console.print(*args)
-    end
+  def p(*args)
+    Console.print(*args)
+  end
 
-    def gets
-      Console.gets
-    end
+  def gets
+    Console.gets
+  end
 
 end
 

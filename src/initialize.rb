@@ -36,11 +36,36 @@ module Sync
 end
 
 # Create repositories folder (unless exists)
-unless Dir.exist?(REP_PATH)
-  Dir.mkdir(REP_PATH)
-  # Syncronize
-  Sync.from_funkywork
+def init
+  unless Dir.exist?(REP_PATH)
+    Package.installed = []
+    Dir.mkdir(REP_PATH)
+    # Syncronize
+    Sync.from_funkywork
+    # Load the repositories list
+    Utils.load(REP_PATH.addSlash + 'list.rb')
+  end
 end
+init
 
-# Load the repositories list
-Utils.load(REP_PATH.addSlash + 'list.rb')
+def prompt
+  Console.clear
+  print "RMEBuilder\n\n\n"
+  print "1.)\tLoad packages\n"
+  print "2.)\tPurge repositories"
+  puts "\n\n"
+  print 'Choice [enter for exit]> '
+  choice = gets.to_i
+  case choice
+  when 1 then
+    Console.clear
+    Utils.load(build_schema)
+    puts "\n\nEverything is downloaded [ENTER]"
+    gets
+  when 2 then
+    Package.purge
+    puts "\n\nAll repositories are clean [ENTER]"
+    gets
+  else exit
+  end
+end

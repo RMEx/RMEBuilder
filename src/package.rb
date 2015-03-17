@@ -27,6 +27,11 @@ class Package
     attr_accessor :installed
     attr_accessor :insert_after
 
+    def purge
+      Utils.remove_recursive(REP_PATH, true) if Dir.exist?(REP_PATH)
+      init
+    end
+
     def from_list
       list =
         Packages.list.map do |name, url|

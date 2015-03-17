@@ -65,4 +65,23 @@ module Utils
     Object.const_set(exception_name, Class.new(Exception))
   end
 
+  def remove_recursive(dir, verbose=false)
+    d = Dir.glob(dir.addSlash+'*')
+    if d.length > 0
+      d.each do |entry|
+        if File.directory?(entry)
+          remove_recursive(entry)
+        else
+          File.delete(entry)
+          puts "Suppress #{entry}" if verbose
+        end
+      end
+    else
+      Dir.rmdir(dir)
+      puts "Suppress #{dir}" if verbose
+    end
+    Dir.rmdir(dir)
+    puts "Suppress #{dir}" if verbose
+  end
+
 end
