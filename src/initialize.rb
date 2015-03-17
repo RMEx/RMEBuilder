@@ -26,9 +26,10 @@ module Sync
   extend self
 
   def from_funkywork
-    list = FW_LIST.get
+    header  = "\# Loaded from #{FW_LIST.uri(true)} at #{Time.now}\n" 
+    list    = FW_LIST.get
     File.open(REP_PATH.addSlash+'list.rb', 'w') do |file|
-      file.write(list)
+      file.write(header + list)
     end
   end
 
