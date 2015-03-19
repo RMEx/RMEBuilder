@@ -46,5 +46,5 @@ Utils.load('../target.rb')
 def folder_target; '../'+TARGET.addSlash; end
 def build_schema; folder_target + SCHEMA; end
 
-
+init
 prompt

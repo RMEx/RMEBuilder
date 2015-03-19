@@ -37,11 +37,14 @@ end
 
 # Create repositories folder (unless exists)
 def init
+  Package.installed = {}
   unless Dir.exists?(CUSTOM_PATH)
     Dir.mkdir(CUSTOM_PATH)
   end
+  if File.exist?(REP_TRACE)
+    Package.installed = eval(FileTools.read(REP_TRACE))
+  end
   unless Dir.exist?(REP_PATH)
-    Package.installed = []
     Dir.mkdir(REP_PATH)
     # Syncronize
     Sync.from_funkywork
@@ -55,8 +58,9 @@ def prompt
   Console.clear
   print "RMEBuilder\n\n\n"
   print "1.)\tLoad packages\n"
-  print "2.)\tPurge repositories"
-  puts "\n\n"
+  print "2.)\tPurge packages\n"
+  print "3.)\tAvailable packages\n"
+  puts "\n"
   print 'Choice [enter for exit]> '
   choice = gets.to_i
   case choice
@@ -67,7 +71,12 @@ def prompt
     gets
   when 2 then
     Package.purge
-    puts "\n\nAll repositories are clean [ENTER]"
+    puts "\n\nAll packages are deleted [ENTER]"
+    gets
+  when 3 then
+    Console.clear
+    Package.show_all
+    print "\n\nPress [ENTER]"
     gets
   else exit
   end

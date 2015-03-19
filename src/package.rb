@@ -32,6 +32,13 @@ class Package
       init
     end
 
+    def available
+      cst = CUSTOM_PATH.addSlash
+      Package.all.keys +
+        Dir.glob("#{cst}*").map {|s| s.sub(CUSTOM_PATH.addSlash, '')}
+
+    end
+
     def from_list
       list =
         Packages.list.map do |name, url|
@@ -64,12 +71,16 @@ class Package
         FileTools.copy(dir+c_name, trg+c_name)
         Console.puts_color "#{c_name} moved in #{trg}", 0x000a
       end
+      Package.installed[name] = pkg_data
+      rprst = Hash[Package.installed.map {|k,v| [k, schema_ctn]}]
+      File.open(REP_TRACE, 'w') { |f| f.write(rprst)}
+      Console.puts_color "#{name} is available", 0x000a
     end
 
     def add_distant(name)
       puts "\nDownload #{name}"
       Package.from_list
-      Package.installed ||= []
+      Package.installed ||= {}
       unless Package.all.has_key?(name)
         raise UnboundPackage, "Unknown package #{name}"
       end
@@ -93,9 +104,21 @@ class Package
         File.open(full_name, 'w') { |f| f.write(init_uri.get) }
         Console.puts_color "#{full_name} downloaded", 0x000a
       end
-      Package.installed << name
-      File.open(REP_TRACE, 'w') { |f| f.write(Package.installed.to_s)}
+      Package.installed[name] = pkg_data
+      rprst = Hash[Package.installed.map {|k,v| [k, schema_ctn]}]
+      File.open(REP_TRACE, 'w') { |f| f.write(rprst)}
       Console.puts_color "#{name} is downloaded", 0x000a
+    end
+
+    def show_all
+      puts ""
+      available.each do |name|
+        if Package.installed.has_key?(name)
+          Console.puts_color "#{name}", 0x000a
+        else
+          Console.puts_color "#{name}", 0x0006
+        end
+      end
     end
 
   end
@@ -116,6 +139,11 @@ class Package
     @dependancies = hash[:dependancies] || []
     @authors      = hash[:authors]      || {}
     @description  = hash[:description]  || ""
+  end
+
+  def serialize
+    "Package.new(name:#{@name}, version:#{@version}, dependancies:#{@dependancies}," +
+    "authors: #{@authors}, description: #{@description})"
   end
 end
 
