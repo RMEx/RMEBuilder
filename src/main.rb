@@ -18,10 +18,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 Graphics.resize_screen(1, 1)
 
 # Source folder
-SRC_PATH  = '../src'
-REP_PATH  = '../.local'
-REP_LIST  = REP_PATH + '/list.rb'
-REP_TRACE = REP_PATH + '/trace.rb'
+SRC_PATH    = '../src'
+REP_PATH    = '../.local'
+REP_LIST    = REP_PATH + '/list.rb'
+REP_TRACE   = REP_PATH + '/trace.rb'
+CUSTOM_PATH = '../customPackages'
 
 # Inner modules
 Kernel.send(:require, SRC_PATH+'/utils.rb')

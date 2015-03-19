@@ -18,12 +18,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 module Console
 
+  attr_accessor :stdout
   Alloc     = Win32API.new('kernel32', 'AllocConsole', 'v', 'l')
   SetFG     = Win32API.new('user32', 'SetForegroundWindow','l','l')
   SetTitle  = Win32API.new('kernel32','SetConsoleTitleA','p','s')
   Get       = Win32API.new('kernel32','GetConsoleWindow', 'v', 'l')
   Find      = Win32API.new('user32', 'FindWindowA', 'pp', 'i')
   SetCursor = Win32API.new('kernel32', 'SetConsoleCursorPosition', 'lp', 'l')
+  SetColor  = Win32API.new('kernel32','SetConsoleTextAttribute','ll','l')
+  GetHandle = Win32API.new('kernel32','GetStdHandle','l','l')
   Handle    = Find.call('RGSS Player', 0)
 
   extend self
@@ -34,6 +37,7 @@ module Console
     SetTitle.call("RMEBuilder v2")
     $stdout.reopen('CONOUT$')
     $stdin.reopen('CONIN$')
+    self.stdout = GetHandle.call(-11)
   end
 
   def print(*data)
@@ -47,6 +51,12 @@ module Console
 
   def clear
     system('cls')
+  end
+
+  def puts_color(txt, color)
+    SetColor.call(stdout, color|0)
+    puts txt
+    SetColor.call(stdout, 0x000f|0)
   end
 
 end

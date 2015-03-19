@@ -85,3 +85,31 @@ module Utils
   end
 
 end
+
+#==============================================================================
+# ** FileTools
+#------------------------------------------------------------------------------
+#  Tools for file manipulation
+#==============================================================================
+
+module FileTools
+  extend self
+
+  def write(file, str, flag = "w+")
+    File.open(file, flag) {|f| f.write(str)}
+  end
+
+  def read(file)
+    File.open(file, 'r') { |f| f.read }
+  end
+
+  def copy(src, dst)
+    k = read(src)
+    write(dst, k)
+  end
+
+  def move(src, dst)
+    copy(src, dst)
+    File.delete(src)
+  end
+end

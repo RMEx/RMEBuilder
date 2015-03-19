@@ -43,17 +43,41 @@ class Package
       Package.all = Hash[list]
     end
 
-    def add(name)
+    def local_package?(name)
+      Dir.exist?(CUSTOM_PATH.addSlash+name)
+    end
+
+    def add_local(name, schema)
+      puts "\nMove #{name}"
+      dir = CUSTOM_PATH.addSlash+name.addSlash
+      trg = REP_PATH.addSlash + name.addSlash
+      if !local_package?(name) && !(File.exists?(dir+schema))
+        raise UnboundPackage,  "Unknown package #{name}"
+      end
+      Utils.remove_recursive(trg, true) if Dir.exist?(trg)
+      Dir.mkdir(trg)
+      schema_ctn = FileTools.read(dir+schema)
+      pkg_data = eval(schema_ctn)
+      FileTools.copy(dir+schema, trg+schema)
+      Console.puts_color "#{schema} moved in #{trg}", 0x000a
+      pkg_data.components.each do |c_name|
+        FileTools.copy(dir+c_name, trg+c_name)
+        Console.puts_color "#{c_name} moved in #{trg}", 0x000a
+      end
+    end
+
+    def add_distant(name)
+      puts "\nDownload #{name}"
       Package.from_list
       Package.installed ||= []
       unless Package.all.has_key?(name)
         raise UnboundPackage, "Unknown package #{name}"
       end
-      install(name) unless Dir.exist?(REP_PATH.addSlash + name)
+      download(name) unless Dir.exist?(REP_PATH.addSlash + name)
+      puts "#{name} is available"
     end
 
-    def install(name)
-      p "Download #{name}"
+    def download(name)
       repo        = (REP_PATH.addSlash + name).addSlash
       Dir.mkdir(repo)
       pkg         = Package.all[name]
@@ -67,11 +91,11 @@ class Package
         init_uri  = pkg[:uri].clone
         init_uri  << c_name
         File.open(full_name, 'w') { |f| f.write(init_uri.get) }
-        p "#{full_name} installed"
+        Console.puts_color "#{full_name} downloaded", 0x000a
       end
       Package.installed << name
       File.open(REP_TRACE, 'w') { |f| f.write(Package.installed.to_s)}
-      p "#{name} is installed"
+      Console.puts_color "#{name} is downloaded", 0x000a
     end
 
   end
@@ -97,8 +121,13 @@ end
 
 module Kernel
 
-  def add_package(name)
-    Package.add(name)
+
+  def add_package(name, schema='package.rb')
+    if Package.local_package?(name)
+      Package.add_local(name, schema)
+    else
+      Package.add_distant(name)
+    end
   end
 
 end

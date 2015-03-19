@@ -37,6 +37,9 @@ end
 
 # Create repositories folder (unless exists)
 def init
+  unless Dir.exists?(CUSTOM_PATH)
+    Dir.mkdir(CUSTOM_PATH)
+  end
   unless Dir.exist?(REP_PATH)
     Package.installed = []
     Dir.mkdir(REP_PATH)
