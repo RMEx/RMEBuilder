@@ -35,7 +35,9 @@ class Package
     def available
       cst = CUSTOM_PATH.addSlash
       Package.all.keys +
-        Dir.glob("#{cst}*").map {|s| s.sub(CUSTOM_PATH.addSlash, '')}
+        Dir.glob("#{cst}*").select do |f|
+          File.directory?(f)
+        end.map { |s| s.sub(CUSTOM_PATH.addSlash, '')}
 
     end
 
@@ -71,6 +73,7 @@ class Package
         FileTools.copy(dir+c_name, trg+c_name)
         Console.puts_color "#{c_name} moved in #{trg}", 0x000a
       end
+      resolve_dependancies(pkg_data.dependancies)
       Package.installed[name] = pkg_data
       rprst = Hash[Package.installed.map {|k,v| [k, schema_ctn]}]
       File.open(REP_TRACE, 'w') { |f| f.write(rprst)}
@@ -104,10 +107,15 @@ class Package
         File.open(full_name, 'w') { |f| f.write(init_uri.get) }
         Console.puts_color "#{full_name} downloaded", 0x000a
       end
+      resolve_dependancies(pkg_data.dependancies)
       Package.installed[name] = pkg_data
       rprst = Hash[Package.installed.map {|k,v| [k, schema_ctn]}]
       File.open(REP_TRACE, 'w') { |f| f.write(rprst)}
       Console.puts_color "#{name} is downloaded", 0x000a
+    end
+
+    def resolve_dependancies(dep)
+      dep.keys.each {|pkg| add_package(pkg)}
     end
 
     def show_all
@@ -116,7 +124,7 @@ class Package
         if Package.installed.has_key?(name)
           Console.puts_color "#{name}", 0x000a
         else
-          Console.puts_color "#{name}", 0x0006
+          Console.puts_color "#{name}", 0x0002
         end
       end
     end
@@ -136,7 +144,7 @@ class Package
     @name         = hash[:name]
     @version      = hash[:version]      || vsn
     @components   = hash[:components]   || {}
-    @dependancies = hash[:dependancies] || []
+    @dependancies = hash[:dependancies] || {}
     @authors      = hash[:authors]      || {}
     @description  = hash[:description]  || ""
   end
@@ -156,6 +164,22 @@ module Kernel
     else
       Package.add_distant(name)
     end
+  end
+
+  def vsn_each
+    vsn_min(vsn(0,0,0))
+  end
+
+  def vsn_max(vsn)
+    [:max, vsn]
+  end
+
+  def vsn_min(vsn)
+    [:min, vsn]
+  end
+
+  def vsn_exclude(vsn)
+    [:exclude, vsn]
   end
 
 end

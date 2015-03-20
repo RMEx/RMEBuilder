@@ -60,6 +60,7 @@ def prompt
   print "1.)\tLoad packages\n"
   print "2.)\tPurge packages\n"
   print "3.)\tAvailable packages\n"
+  print "4.)\tUpdate packages list\n"
   puts "\n"
   print 'Choice [enter for exit]> '
   choice = gets.to_i
@@ -75,6 +76,13 @@ def prompt
     gets
   when 3 then
     Console.clear
+    Package.show_all
+    print "\n\nPress [ENTER]"
+    gets
+  when 4 then
+    Console.clear
+    Sync.from_funkywork
+    puts "\n\nList is up to date\n"
     Package.show_all
     print "\n\nPress [ENTER]"
     gets
