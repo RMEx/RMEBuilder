@@ -91,8 +91,7 @@ class Package
       puts "#{name} is available"
     end
 
-    def download(name)
-      repo        = (REP_PATH.addSlash + name).addSlash
+    def download(name, repo = (REP_PATH.addSlash + name).addSlash)
       Dir.mkdir(repo)
       pkg         = Package.all[name]
       schema_uri  = pkg[:uri].clone
@@ -115,7 +114,7 @@ class Package
     end
 
     def resolve_dependancies(dep)
-      dep.keys.each {|pkg| add_package(pkg)}
+      dep.each {|pkg| add_package(pkg)}
     end
 
     def show_all
@@ -135,6 +134,7 @@ class Package
   attr_accessor :version
   attr_accessor :components
   attr_accessor :dependancies
+  attr_accessor :exclude
   attr_accessor :description
   attr_accessor :authors
   attr_accessor :uri
@@ -145,6 +145,7 @@ class Package
     @version      = hash[:version]      || vsn
     @components   = hash[:components]   || {}
     @dependancies = hash[:dependancies] || {}
+    @exclude      = hash[:exclude]      || []
     @authors      = hash[:authors]      || {}
     @description  = hash[:description]  || ""
   end
@@ -164,22 +165,6 @@ module Kernel
     else
       Package.add_distant(name)
     end
-  end
-
-  def vsn_each
-    vsn_min(vsn(0,0,0))
-  end
-
-  def vsn_max(vsn)
-    [:max, vsn]
-  end
-
-  def vsn_min(vsn)
-    [:min, vsn]
-  end
-
-  def vsn_exclude(vsn)
-    [:exclude, vsn]
   end
 
 end

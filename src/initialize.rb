@@ -61,31 +61,40 @@ def prompt
   print "2.)\tPurge packages\n"
   print "3.)\tAvailable packages\n"
   print "4.)\tUpdate packages list\n"
+  print "5.)\tUpdate installed packages\n"
   puts "\n"
   print 'Choice [enter for exit]> '
-  choice = gets.to_i
+  choice = gets.chomp
   case choice
-  when 1 then
+  when "1", "build" then
     Console.clear
     Utils.load(build_schema)
-    puts "\n\nEverything is downloaded [ENTER]"
-    gets
-  when 2 then
+    puts "\n\nEverything is downloaded"
+  when "2", "purge" then
     Package.purge
-    puts "\n\nAll packages are deleted [ENTER]"
-    gets
-  when 3 then
+    puts "\n\nAll packages are deleted"
+  when "3", "show" then
     Console.clear
     Package.show_all
-    print "\n\nPress [ENTER]"
-    gets
-  when 4 then
+  when "4", "update" then
     Console.clear
     Sync.from_funkywork
     puts "\n\nList is up to date\n"
     Package.show_all
-    print "\n\nPress [ENTER]"
-    gets
+  when "5", "rebuild" then
+    Console.clear
+    Package.purge
+    Sync.from_funkywork
+    Utils.load(build_schema)
+    puts "\n\nEverything is downloaded"
+    puts "\n\nList is up to date\n"
+  when /download (.*)/ then Package.download($1)
+  when /clone (.*)/ then
+    d = CUSTOM_PATH.addSlash+$1.addSlash
+    Utils.remove_recursive(d, true) if Dir.exist?(d)
+    Package.download($1, d)
   else exit
   end
+  puts "\n\nPress [ENTER]"
+  gets
 end
