@@ -18,10 +18,41 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 Utils.define_exception :UnboundPackage
 
+class Package
+
+  attr_accessor :name
+  attr_accessor :version
+  attr_accessor :components
+  attr_accessor :dependancies
+  attr_accessor :exclude
+  attr_accessor :description
+  attr_accessor :authors
+  attr_accessor :uri
+  attr_accessor :schema
+
+  def initialize(hash)
+    @name         = hash[:name]
+    @version      = hash[:version]      || vsn
+    @components   = hash[:components]   || {}
+    @dependancies = hash[:dependancies] || {}
+    @exclude      = hash[:exclude]      || []
+    @authors      = hash[:authors]      || {}
+    @description  = hash[:description]  || ""
+  end
+
+  def serialize
+    "Package.new(name:#{@name}, version:#{@version}," +
+    " dependancies:#{@dependancies}, authors: #{@authors}," +
+    "description: #{@description})"
+  end
+end
+
+
 module Packages
   attr_accessor :locals, :all
   Packages.locals =
-    (File.exist?(REP_TRACE)) ? (FileTools.eval_file(REP_TRACE)) : {}
+    (File.exist?(REP_TRACE)) ?
+    (Hash[FileTools.eval_file(REP_TRACE)].map {|k,v| [k, eval(v)]}) : {}
 
   def exist?(name)
     list.has_key?(name)
@@ -63,6 +94,7 @@ class Package
       else
         if Dir.exist?(target)
           Console.alert "\t#{target} already exist"
+          puts ""
           return
         end
       end
@@ -81,47 +113,18 @@ class Package
         FileTools.write(full_name, init_uri.get, 'w')
         Console.success "\t#{full_name} is downloaded"
       end
+      resolve_dependancies(schema)
+      Packages.locals[name] = schema
+      rep = Hash[Packages.locals.map {|k, v| [k, schema_content]}]
+      FileTools.write(REP_TRACE, rep, 'w')
       Console.success "#{name} is downloaded !"
+      puts ""
     end
 
-  end
-
-  attr_accessor :name
-  attr_accessor :version
-  attr_accessor :components
-  attr_accessor :dependancies
-  attr_accessor :exclude
-  attr_accessor :description
-  attr_accessor :authors
-  attr_accessor :uri
-  attr_accessor :schema
-
-  def initialize(hash)
-    @name         = hash[:name]
-    @version      = hash[:version]      || vsn
-    @components   = hash[:components]   || {}
-    @dependancies = hash[:dependancies] || {}
-    @exclude      = hash[:exclude]      || []
-    @authors      = hash[:authors]      || {}
-    @description  = hash[:description]  || ""
-  end
-
-  def serialize
-    "Package.new(name:#{@name}, version:#{@version}," +
-    " dependancies:#{@dependancies}, authors: #{@authors}," +
-    "description: #{@description})"
-  end
-end
-
-module Kernel
-
-
-  def add_package(name, schema='package.rb')
-    if Package.local_package?(name)
-      Package.add_local(name, schema)
-    else
-      Package.add_distant(name)
+    def resolve_dependancies(schema)
+      schema.dependancies.each {|pkg| download(pkg)}
     end
+
   end
 
 end
