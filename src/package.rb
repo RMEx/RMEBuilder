@@ -58,21 +58,30 @@ class Package
       FileTools.safe_mkdir(target)
       target = target.addSlash + name.addSlash
       if update
-        Console.warning "Suppress #{target} for redownload"
+        Console.warning "\tSuppress #{target} for redownload"
         FileTools.safe_rmdir(target)
       else
         if Dir.exist?(target)
-          Console.alert "#{target} already exist"
+          Console.alert "\t#{target} already exist"
           return
         end
       end
-      Console.success "Create #{target}"
+      Console.success "\tCreate #{target}"
       Dir.mkdir(target)
       uri = package[:uri].clone
       uri << package[:schema]
       schema_content = uri.get
       FileTools.write(target + package[:schema], schema_content, 'w')
-      Console.success "Schema is downloaded"
+      Console.success "\tSchema is downloaded"
+      schema = eval(schema_content)
+      schema.components.each do |c_name|
+        full_name = target + c_name
+        init_uri = package[:uri].clone
+        init_uri << c_name
+        FileTools.write(full_name, init_uri.get, 'w')
+        Console.success "\t#{full_name} is downloaded"
+      end
+      Console.success "#{name} is downloaded !"
     end
 
   end

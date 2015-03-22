@@ -22,12 +22,13 @@ module Console
   SetFG       = Win32API.new('user32', 'SetForegroundWindow','l','l')
   SetColor    = Win32API.new('kernel32','SetConsoleTextAttribute','ll','l')
   GetHandle   = Win32API.new('kernel32','GetStdHandle','l','l')
+  GetConsole  = Win32API.new('kernel32', 'GetConsoleWindow', 'v', 'l')
 
   extend self
 
   def init
     self.stdout = GetHandle.call(-11)
-    SetFG.call(self.stdout)
+    SetFG.call(GetConsole.call)
   end
 
   def clear
