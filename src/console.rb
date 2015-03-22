@@ -19,32 +19,34 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 module Console
 
   attr_accessor :stdout, :handle
-  Alloc     = Win32API.new('kernel32', 'AllocConsole', 'v', 'l')
-  SetFG     = Win32API.new('user32', 'SetForegroundWindow','l','l')
-  SetTitle  = Win32API.new('kernel32','SetConsoleTitleA','p','s')
-  Get       = Win32API.new('kernel32','GetConsoleWindow', 'v', 'l')
-  Find      = Win32API.new('user32', 'FindWindowA', 'pp', 'i')
-  SetCursor = Win32API.new('kernel32', 'SetConsoleCursorPosition', 'lp', 'l')
-  SetColor  = Win32API.new('kernel32','SetConsoleTextAttribute','ll','l')
-  GetHandle = Win32API.new('kernel32','GetStdHandle','l','l')
-  SetHandle = Win32API.new('kernel32', 'SetStdHandle', 'll', 'l')
-  ScreenBuff= Win32API.new('kernel32','CreateConsoleScreenBuffer','nnpnp','l')
-  Handle    = Find.call('RGSS Player', 0)
+  Alloc       = Win32API.new('kernel32', 'AllocConsole', 'v', 'l')
+  SetFG       = Win32API.new('user32', 'SetForegroundWindow','l','l')
+  SetTitle    = Win32API.new('kernel32','SetConsoleTitleA','p','s')
+  Get         = Win32API.new('kernel32','GetConsoleWindow', 'v', 'l')
+  Find        = Win32API.new('user32', 'FindWindowA', 'pp', 'i')
+  SetCursor   = Win32API.new('kernel32', 'SetConsoleCursorPosition', 'lp', 'l')
+  SetColor    = Win32API.new('kernel32','SetConsoleTextAttribute','ll','l')
+  GetHandle   = Win32API.new('kernel32','GetStdHandle','l','l')
+  SetHandle   = Win32API.new('kernel32', 'SetStdHandle', 'll', 'l')
+  ScreenBuff  = Win32API.new('kernel32','CreateConsoleScreenBuffer','nnpnp','l')
+  CreateFile  = Win32API.new('Kernel32.dll', 'CreateFile', 'piipiii', 'i')
+  FreeConsole = Win32API.new("kernel32", "FreeConsole", "v", "i")
+  Handle      = Find.call('RGSS Player', 0)
 
   extend self
 
   def init
+    FreeConsole.call
     Alloc.call
     tmode = 0x80000000|0x40000000
     fmode = 0x00000001|0x00000002
-    self.handle = ScreenBuff.call(tmode, fmode, nil, 0x00000001, nil)
+    #self.handle = ScreenBuff.call(tmode, fmode, nil, 0x00000001, nil)
+    CreateFile.call('CONIN$', tmode, fmode, 0, 0x04, 0, 0)
     SetFG.call(Handle)
     SetTitle.call("RMEBuilder v2")
     STDOUT.reopen('CONOUT$')
     STDIN.reopen('CONIN$')
-    SetHandle.call(-11, self.handle)
-    SetHandle.call(-10, self.handle)
-    #self.stdout = GetHandle.call(-11)
+    self.stdout = GetHandle.call(-11)
   end
 
   def print(*data)
@@ -61,9 +63,9 @@ module Console
   end
 
   def puts_color(txt, color)
-    SetColor.call(self.handle, color|0)
+    SetColor.call(self.stdout, color|0)
     puts txt
-    SetColor.call(self.handle, 0x0007|0)
+    SetColor.call(self.stdout, 0x0007|0)
   end
 
   def success(txt)
