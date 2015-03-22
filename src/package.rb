@@ -18,114 +18,61 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 Utils.define_exception :UnboundPackage
 
+module Packages
+  attr_accessor :locals, :all
+  Packages.locals =
+    (File.exist?(REP_TRACE)) ? (FileTools.eval_file(REP_TRACE)) : {}
+
+  def exist?(name)
+    list.has_key?(name)
+  end
+
+  def map
+    list =
+      Packages.list.map do |name, url|
+        args    = url.split('/')
+        schema  = args.pop
+        uri     = args.join('/')
+        [name, {uri: Http.service_with(uri), schema: schema}]
+      end
+    Packages.all = Hash[list]
+  end
+  map
+
+end
+
 
 class Package
 
   class << self
 
-    attr_accessor :all
-    attr_accessor :installed
-    attr_accessor :insert_after
-
-    def purge
-      Utils.remove_recursive(REP_PATH, true) if Dir.exist?(REP_PATH)
-      init
+    def exist?(name)
+      Packages.exist?(name)
     end
 
-    def available
-      cst = CUSTOM_PATH.addSlash
-      Package.all.keys +
-        Dir.glob("#{cst}*").select do |f|
-          File.directory?(f)
-        end.map { |s| s.sub(CUSTOM_PATH.addSlash, '')}
-
-    end
-
-    def from_list
-      list =
-        Packages.list.map do |name, url|
-          args    = url.split('/')
-          schema  = args.pop
-          uri     = args.join('/')
-          [name, {uri: Http.service_with(uri), schema: schema}]
-        end
-      Package.all = Hash[list]
-    end
-
-    def local_package?(name)
-      Dir.exist?(CUSTOM_PATH.addSlash+name)
-    end
-
-    def add_local(name, schema)
-      puts "\nMove #{name}"
-      dir = CUSTOM_PATH.addSlash+name.addSlash
-      trg = REP_PATH.addSlash + name.addSlash
-      if !local_package?(name) && !(File.exists?(dir+schema))
-        raise UnboundPackage,  "Unknown package #{name}"
-      end
-      Utils.remove_recursive(trg, true) if Dir.exist?(trg)
-      Dir.mkdir(trg)
-      schema_ctn = FileTools.read(dir+schema)
-      pkg_data = eval(schema_ctn)
-      FileTools.copy(dir+schema, trg+schema)
-      Console.puts_color "#{schema} moved in #{trg}", 0x000a
-      pkg_data.components.each do |c_name|
-        FileTools.copy(dir+c_name, trg+c_name)
-        Console.puts_color "#{c_name} moved in #{trg}", 0x000a
-      end
-      resolve_dependancies(pkg_data.dependancies)
-      Package.installed[name] = pkg_data
-      rprst = Hash[Package.installed.map {|k,v| [k, schema_ctn]}]
-      File.open(REP_TRACE, 'w') { |f| f.write(rprst)}
-      Console.puts_color "#{name} is available", 0x000a
-    end
-
-    def add_distant(name)
-      puts "\nDownload #{name}"
-      Package.from_list
-      Package.installed ||= {}
-      unless Package.all.has_key?(name)
-        raise UnboundPackage, "Unknown package #{name}"
-      end
-      download(name) unless Dir.exist?(REP_PATH.addSlash + name)
-      puts "#{name} is available"
-    end
-
-    def download(name, repo = (REP_PATH.addSlash + name).addSlash)
-      Dir.mkdir(repo)
-      pkg         = Package.all[name]
-      schema_uri  = pkg[:uri].clone
-      schema_uri  << pkg[:schema]
-      schema_ctn  = schema_uri.get
-      File.open(repo+pkg[:schema], 'w') { |f| f.write(schema_ctn) }
-      pkg_data    = eval(schema_ctn)
-      pkg_data.components.each do |c_name|
-        full_name = repo + c_name
-        init_uri  = pkg[:uri].clone
-        init_uri  << c_name
-        File.open(full_name, 'w') { |f| f.write(init_uri.get) }
-        Console.puts_color "#{full_name} downloaded", 0x000a
-      end
-      resolve_dependancies(pkg_data.dependancies)
-      Package.installed[name] = pkg_data
-      rprst = Hash[Package.installed.map {|k,v| [k, schema_ctn]}]
-      File.open(REP_TRACE, 'w') { |f| f.write(rprst)}
-      Console.puts_color "#{name} is downloaded", 0x000a
-    end
-
-    def resolve_dependancies(dep)
-      dep.each {|pkg| add_package(pkg)}
-    end
-
-    def show_all
-      puts ""
-      available.each do |name|
-        if Package.installed.has_key?(name)
-          Console.puts_color "#{name}", 0x000a
-        else
-          Console.puts_color "#{name}", 0x0002
+    def download(name, target = REP_PATH, update = false)
+      raise UnboundPackage unless exist?(name)
+      package = Packages.all[name]
+      puts "Download #{name}"
+      Console.refutable "From #{Packages.list[name]}"
+      FileTools.safe_mkdir(target)
+      target = target.addSlash + name.addSlash
+      if update
+        Console.warning "Suppress #{target} for redownload"
+        FileTools.safe_rmdir(target)
+      else
+        if Dir.exist?(target)
+          Console.alert "#{target} already exist"
+          return
         end
       end
+      Console.success "Create #{target}"
+      Dir.mkdir(target)
+      uri = package[:uri].clone
+      uri << package[:schema]
+      schema_content = uri.get
+      FileTools.write(target + package[:schema], schema_content, 'w')
+      Console.success "Schema is downloaded"
     end
 
   end
@@ -151,8 +98,9 @@ class Package
   end
 
   def serialize
-    "Package.new(name:#{@name}, version:#{@version}, dependancies:#{@dependancies}," +
-    "authors: #{@authors}, description: #{@description})"
+    "Package.new(name:#{@name}, version:#{@version}," +
+    " dependancies:#{@dependancies}, authors: #{@authors}," +
+    "description: #{@description})"
   end
 end
 

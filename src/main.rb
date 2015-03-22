@@ -29,10 +29,9 @@ Kernel.send(:require, SRC_PATH+'/utils.rb')
 Utils.load('console.rb')
 Utils.load('http.rb')
 Utils.load('version.rb')
-Utils.load('package.rb')
 Utils.load('initialize.rb')
-Utils.load(REP_LIST)
-Package.from_list
+Utils.load('package.rb')
+Utils.load('../target.rb')
 
 # Define destination folder
 def insert_after(x)
@@ -41,10 +40,5 @@ end
 def position
   Package.insert_after || 'Scene_GameOver'
 end
-
-Utils.load('../target.rb')
-def folder_target; '../'+TARGET.addSlash; end
-def build_schema; folder_target + SCHEMA; end
-
-init
-prompt
+Package.download("RME")
+gets

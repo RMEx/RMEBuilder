@@ -65,24 +65,6 @@ module Utils
     Object.const_set(exception_name, Class.new(Exception))
   end
 
-  def remove_recursive(dir, verbose=false)
-    d = Dir.glob(dir.addSlash+'*')
-    if d.length > 0
-      d.each do |entry|
-        if File.directory?(entry)
-          remove_recursive(entry)
-        else
-          File.delete(entry)
-          puts "Suppress #{entry}" if verbose
-        end
-      end
-    else
-      Dir.rmdir(dir)
-      puts "Suppress #{dir}" if verbose
-    end
-    Dir.rmdir(dir)
-    puts "Suppress #{dir}" if verbose
-  end
 
 end
 
@@ -111,5 +93,40 @@ module FileTools
   def move(src, dst)
     copy(src, dst)
     File.delete(src)
+  end
+
+  def safe_rmdir(d, v=false)
+    if Dir.exist?(d)
+      remove_recursive(d, v)
+    end
+  end
+
+  def safe_mkdir(d)
+    unless Dir.exist?(d)
+      Dir.mkdir(d)
+    end
+  end
+
+  def eval_file(f)
+    return eval(read(f))
+  end
+
+  def remove_recursive(dir, verbose=false)
+    d = Dir.glob(dir.addSlash+'*')
+    if d.length > 0
+      d.each do |entry|
+        if File.directory?(entry)
+          remove_recursive(entry)
+        else
+          File.delete(entry)
+          puts "Suppress #{entry}" if verbose
+        end
+      end
+    else
+      Dir.rmdir(dir)
+      puts "Suppress #{dir}" if verbose
+    end
+    Dir.rmdir(dir)
+    puts "Suppress #{dir}" if verbose
   end
 end

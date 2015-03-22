@@ -35,66 +35,9 @@ module Sync
 
 end
 
-# Create repositories folder (unless exists)
 def init
-  Package.installed = {}
-  unless Dir.exists?(CUSTOM_PATH)
-    Dir.mkdir(CUSTOM_PATH)
-  end
-  if File.exist?(REP_TRACE)
-    Package.installed = eval(FileTools.read(REP_TRACE))
-  end
-  unless Dir.exist?(REP_PATH)
-    Dir.mkdir(REP_PATH)
-    # Syncronize
-    Sync.from_funkywork
-    # Load the repositories list
-    Utils.load(REP_PATH.addSlash + 'list.rb')
-  end
+  FileTools.safe_mkdir(REP_PATH)
+  Sync.from_funkywork
+  Utils.load(REP_LIST)
 end
 init
-
-def prompt
-  Console.clear
-  print "RMEBuilder\n\n\n"
-  print "1.)\tLoad packages\n"
-  print "2.)\tPurge packages\n"
-  print "3.)\tAvailable packages\n"
-  print "4.)\tUpdate packages list\n"
-  print "5.)\tUpdate installed packages\n"
-  puts "\n"
-  print 'Choice [enter for exit]> '
-  choice = gets.chomp
-  case choice
-  when "1", "build" then
-    Console.clear
-    Utils.load(build_schema)
-    puts "\n\nEverything is downloaded"
-  when "2", "purge" then
-    Package.purge
-    puts "\n\nAll packages are deleted"
-  when "3", "show" then
-    Console.clear
-    Package.show_all
-  when "4", "update" then
-    Console.clear
-    Sync.from_funkywork
-    puts "\n\nList is up to date\n"
-    Package.show_all
-  when "5", "rebuild" then
-    Console.clear
-    Package.purge
-    Sync.from_funkywork
-    Utils.load(build_schema)
-    puts "\n\nEverything is downloaded"
-    puts "\n\nList is up to date\n"
-  when /download (.*)/ then Package.download($1)
-  when /clone (.*)/ then
-    d = CUSTOM_PATH.addSlash+$1.addSlash
-    Utils.remove_recursive(d, true) if Dir.exist?(d)
-    Package.download($1, d)
-  else exit
-  end
-  puts "\n\nPress [ENTER]"
-  gets
-end
