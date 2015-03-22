@@ -18,44 +18,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 module Console
 
-  attr_accessor :stdout, :handle
-  Alloc       = Win32API.new('kernel32', 'AllocConsole', 'v', 'l')
+  attr_accessor :stdout
   SetFG       = Win32API.new('user32', 'SetForegroundWindow','l','l')
-  SetTitle    = Win32API.new('kernel32','SetConsoleTitleA','p','s')
-  Get         = Win32API.new('kernel32','GetConsoleWindow', 'v', 'l')
-  Find        = Win32API.new('user32', 'FindWindowA', 'pp', 'i')
-  SetCursor   = Win32API.new('kernel32', 'SetConsoleCursorPosition', 'lp', 'l')
   SetColor    = Win32API.new('kernel32','SetConsoleTextAttribute','ll','l')
   GetHandle   = Win32API.new('kernel32','GetStdHandle','l','l')
-  SetHandle   = Win32API.new('kernel32', 'SetStdHandle', 'll', 'l')
-  ScreenBuff  = Win32API.new('kernel32','CreateConsoleScreenBuffer','nnpnp','l')
-  CreateFile  = Win32API.new('Kernel32.dll', 'CreateFile', 'piipiii', 'i')
-  FreeConsole = Win32API.new("kernel32", "FreeConsole", "v", "i")
-  Handle      = Find.call('RGSS Player', 0)
 
   extend self
 
   def init
-    FreeConsole.call
-    Alloc.call
-    tmode = 0x80000000|0x40000000
-    fmode = 0x00000001|0x00000002
-    #self.handle = ScreenBuff.call(tmode, fmode, nil, 0x00000001, nil)
-    CreateFile.call('CONIN$', tmode, fmode, 0, 0x04, 0, 0)
-    SetFG.call(Handle)
-    SetTitle.call("RMEBuilder v2")
-    STDOUT.reopen('CONOUT$')
-    STDIN.reopen('CONIN$')
     self.stdout = GetHandle.call(-11)
-  end
-
-  def print(*data)
-    puts(*data.collect {|thing| thing.inspect})
-  end
-
-  def gets
-    SetFG.call(Get.call)
-    STDIN.gets
+    SetFG.call(self.stdout)
   end
 
   def clear
@@ -82,18 +54,6 @@ module Console
 
   def refutable(txt)
     puts_color(txt, 0x0008)
-  end
-
-end
-
-module Kernel
-
-  def p(*args)
-    Console.print(*args)
-  end
-
-  def gets
-    Console.gets
   end
 
 end

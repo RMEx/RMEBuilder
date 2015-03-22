@@ -1,3 +1,3 @@
 @echo off
 
-start bin/Builder.exe
+start bin/Game.exe console
