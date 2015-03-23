@@ -41,3 +41,60 @@ def init
   Utils.load(REP_LIST)
 end
 init
+
+def perform(name)
+  begin
+    yield(name)
+  rescue UnboundPackage
+    puts ""
+    k = Packages.all.keys.sort_by {|a| a.downcase.leven(name)}
+    Console.alert "\t\"#{name}\" is not an existant package."
+    Console.refutable "\tDid you mean maybe \"#{k[0]}\" ?"
+  end
+end
+
+def prompt
+  Console.show_logo
+  loop do
+    print "RMEBuilder> "
+    result = gets.chomp
+    case result
+
+    when /show all.*/, 'show' then
+      puts ""
+      Packages.all.keys.sort_by{|a| a.downcase}.each do |pkg|
+        if Packages.locals.has_key?(pkg)
+          Console.success "\t#{pkg}"
+        else
+          Console.refutable "\t#{pkg}"
+        end
+      end
+
+    when /download (.*) --force-update/, /update (.*)/
+      then perform($1){|n| Package.download(n, REP_PATH, true)}
+
+    when /clone (.*) --force-update/, /reclone (.*)/
+      then perform($1){|n| Package.clone(n, true)}
+
+    when /download (.*)/
+      then perform($1){|n| Package.download(n)}
+
+    when /clone (.*)/
+      then perform($1){|n| Package.clone(n)}
+
+    when '--quit', 'quit' then exit
+
+    when '--help', 'help' then
+      puts ""
+      Console.two_colors "\tDownload a package:\t", "download <package-name>\n", 0x0008, 0x000e
+      Console.two_colors "\tClone a package:\t", "clone <package-name>\n", 0x0008, 0x000e
+      Console.two_colors "\tUpdate a package:\t", "update <package-name>\n", 0x0008, 0x000e
+      Console.two_colors "\tReclone a package:\t", "reclone <package-name>\n", 0x0008, 0x000e
+      Console.two_colors "\tShow all packages:\t", "show all\n", 0x0008, 0x000e
+      Console.two_colors "\tQuit:\t\t\t", "quit\n", 0x0008, 0x000e
+    else
+      Console.refutable "enter --help for informations"
+    end
+    puts ""
+  end
+end

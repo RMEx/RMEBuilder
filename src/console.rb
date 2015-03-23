@@ -41,6 +41,14 @@ module Console
     SetColor.call(self.stdout, 0x0007|0)
   end
 
+  def two_colors(a, b, ca, cb)
+    SetColor.call(self.stdout, ca|0)
+    print a
+    SetColor.call(self.stdout, cb|0)
+    print b
+    SetColor.call(self.stdout, 0x0007|0)
+  end
+
   def success(txt)
     puts_color(txt, 0x000a)
   end
@@ -55,6 +63,37 @@ module Console
 
   def refutable(txt)
     puts_color(txt, 0x0008)
+  end
+
+  def show_logo
+    SetColor.call(self.stdout,  0x000b|0)
+    puts  '
+                         ___          ___          ___
+                        /\  \        /\  \        /\__\
+                       /::\  \      |::\  \      /:/ _/_
+                      /:/\:\__\     |:|:\  \    /:/ /\__\
+                     /:/ /:/  /   __|:|\:\  \  /:/ /:/ _/_
+                    /:/_/:/__/___/::::|_\:\__\/:/_/:/ /\__\
+                    \:\/:::::/  /\:\~~\  \/__/\:\/:/ /:/  /
+                     \::/~~/~~~~  \:\  \       \::/_/:/  /
+                      \:\~~\       \:\  \       \:\/:/  /
+                       \:\__\       \:\__\       \::/  /
+                        \/__/        \/__/        \/__/ '
+    SetColor.call(self.stdout,  0x000d|0)
+    Kernel.sleep(1)
+    puts '
+                __            _  __     __            ___      ____
+               / /_   __  __ (_)/ /____/ /___   _____|__ \    / __ \
+              / __ \ / / / // // // __  // _ \ / ___/__/ /   / / / /
+             / /_/ // /_/ // // // /_/ //  __// /   / __/ _ / /_/ /
+            /_.___/ \__,_//_//_/ \__,_/ \___//_/   /____/(_)\____/  '
+    puts "\n"
+    Kernel.sleep(1)
+    SetColor.call(self.stdout, 0x000e|0)
+    puts "             This software is a free software released under LGPL\n\n\n"
+    puts "\n\n"
+    Kernel.sleep(1)
+    SetColor.call(self.stdout, 0x0007|0)
   end
 
 end

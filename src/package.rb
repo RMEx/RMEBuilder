@@ -52,7 +52,7 @@ module Packages
   attr_accessor :locals, :all
   Packages.locals =
     (File.exist?(REP_TRACE)) ?
-    (Hash[FileTools.eval_file(REP_TRACE)].map {|k,v| [k, eval(v)]}) : {}
+    (Hash[FileTools.eval_file(REP_TRACE).map {|k,v| [k, eval(v)]}]) : {}
 
   def exist?(name)
     list.has_key?(name)
@@ -81,10 +81,10 @@ class Package
       Packages.exist?(name)
     end
 
-    def download(name, target = REP_PATH, update = false)
+    def download(name, target = REP_PATH, update = false, dep = target)
       raise UnboundPackage unless exist?(name)
       package = Packages.all[name]
-      puts "Download #{name}"
+      puts "\nDownload #{name}"
       Console.refutable "From #{Packages.list[name]}"
       FileTools.safe_mkdir(target)
       target = target.addSlash + name.addSlash
@@ -113,16 +113,20 @@ class Package
         FileTools.write(full_name, init_uri.get, 'w')
         Console.success "\t#{full_name} is downloaded"
       end
-      resolve_dependancies(schema)
+      resolve_dependancies(schema, dep, update)
       Packages.locals[name] = schema
       rep = Hash[Packages.locals.map {|k, v| [k, schema_content]}]
       FileTools.write(REP_TRACE, rep, 'w')
-      Console.success "#{name} is downloaded !"
+      Console.success "\n#{name} is downloaded !\n"
       puts ""
     end
 
-    def resolve_dependancies(schema)
-      schema.dependancies.each {|pkg| download(pkg)}
+    def resolve_dependancies(schema, r, t)
+      schema.dependancies.each {|pkg| download(pkg, r, t)}
+    end
+
+    def clone(name, update = false)
+      download(name, CUSTOM_PATH, update, REP_PATH)
     end
 
   end

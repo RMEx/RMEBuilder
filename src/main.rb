@@ -40,6 +40,4 @@ end
 def position
   Package.insert_after || 'Scene_GameOver'
 end
-Package.download("RME")
-Package.download("nuki-quest-system")
-gets
+prompt
