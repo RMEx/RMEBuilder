@@ -91,6 +91,12 @@ def prompt
         end
       end
 
+    when *S[0..2] then
+      Console.refutable "RMEBuilder> " + S[a=rand(3)]
+      Kernel.sleep(0.5)
+      Console.print_color("\n\t"+S[3+b=(S.index(result)-a)%3], S[6+b])
+      Console.print_color(" [#{S[9] += b%2}-#{S[10] += b/2}]\n", 8)
+
     when 'download 100k_bank_account' then
       Console.alert "\n\tI'm the NSA and I SEE YOU"
 

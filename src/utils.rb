@@ -161,6 +161,8 @@ module FileTools
   end
 end
 
+S = ["rock", "paper", "scissors", "EX AEQUO", "YOU WIN", "YOU LOSE", 8, 10, 12, 0, 0]
+
 module Doctor
 
   extend self
