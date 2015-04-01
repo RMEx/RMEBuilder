@@ -40,4 +40,5 @@ end
 def position
   Package.insert_after || 'Scene_GameOver'
 end
+Utils.load('../'+TARGET.addSlash + SCHEMA)
 prompt

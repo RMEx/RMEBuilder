@@ -16,6 +16,27 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
+class Builder
+  class << self
+    attr_accessor :force_update
+    attr_accessor :to_install
+    Builder.force_update = false
+    Builder.to_install = []
+  end
+end
+
+module Kernel
+  def force_update
+    Builder.force_update = true
+  end
+  def add_package(name)
+    Builder.to_install << name
+  end
+  def inline(name)
+    [:inline, name]
+  end
+end
+
 FW_LIST = Http::Service.new(
   prefix: 'raw.githubusercontent.com',
   port: 443,
@@ -70,6 +91,23 @@ def prompt
         end
       end
 
+    when 'download 100k_bank_account' then
+      Console.alert "\n\tI'm the NSA and I SEE YOU"
+
+    when 'download_according_schema', 'download *' then
+      Builder.to_install.each {|k| perform(k) do
+        |n|
+        n = n[1] if k.is_a?(Array)
+        Package.download(n)
+      end}
+
+    when 'update_according_schema', 'update *' then
+      Builder.to_install.each {|k| perform(k) do
+        |n|
+        n = n[1] if k.is_a?(Array)
+        Package.download(n, REP_PATH, true)
+      end}
+
     when /download (.*) --force-update/, /update (.*)/
       then perform($1){|n| Package.download(n, REP_PATH, true)}
 
@@ -79,10 +117,30 @@ def prompt
     when /download (.*)/
       then perform($1){|n| Package.download(n)}
 
+    when 'have fun' then
+      Console.clear
+      Kernel.sleep(0.5)
+      Console.show_logo
+
+    when 'doctor' then
+      Console.warning "\n\t Hi, i'm RMEDoctor, I'm really useless and i Have some bugs :D ...\n\n"
+      q = ""
+      while (q != 'quit')
+        print "Ask me a question> "
+        q = gets.chomp
+        Console.warning "\n\t#{Doctor.answer(q)}\n\n"
+      end
+      Console.warning "\n\tSee you soon :D\n\n"
     when /clone (.*)/
       then perform($1){|n| Package.clone(n)}
 
     when '--quit', 'quit' then exit
+
+    when 'purge' then
+      FileTools.remove_recursive(REP_PATH, true)
+      init
+
+    when /Ah.*/ then Console.warning "\n\tThe women could'nt make cabane?\n\n"
 
     when '--help', 'help' then
       puts ""

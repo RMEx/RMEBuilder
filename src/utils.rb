@@ -52,6 +52,10 @@ class String
    return matrix.last.last
  end
 
+ def words
+   self.split(/,| |\.|\;|\:|\=|\!|\?/)
+ end
+
   # End with /
   def addSlash
     c = self[-1] == '/' ? '' : '/'
@@ -155,4 +159,52 @@ module FileTools
     Dir.rmdir(dir)
     puts "Suppress #{dir}" if verbose
   end
+end
+
+module Doctor
+
+  extend self
+
+  def thematic_with(li, li2)
+    (li && li2).length > 0
+  end
+
+  def thematic_hello(words)
+    thematic_with(words, ['hello', 'ola', 'hi', 'goodmorning'])
+  end
+
+  def thematic_feel(words)
+    thematic_with(words, ['feel', 'good', 'bad', 'sad', 'happy', 'alone'])
+  end
+
+  def thematic_family(words)
+    thematic_with(words, ['parent', 'children', 'sister', 'brother', 'sisters', 'brothers', 'parents'])
+  end
+
+  def hash
+    {
+      hello:  ["Hi, how are you?", "Hello...", "Uhu"],
+      feel:   ["What about you?", "It is your feeling ?", "Talk me about that?"],
+      family: ["Is there problemes with him?", "Talk me about your family?", "Hmmm..."]
+    }
+  end
+
+  def answer(question)
+    words = question.words.map {|k| k.downcase}
+    thematic = []
+    thematic << :hello if thematic_hello(words)
+    thematic << :feel if thematic_feel(words)
+    thematic << :family if thematic_family(words)
+    if Kernel.rand(2) == 0
+      return "Oh, you say \"#{question}\"... how is your feeling about that?"
+    else
+      hash.each do |key, val|
+        if Kernel.rand(2) == 0 && thematic.include?(key)
+          return val.sample
+        end
+      end
+    end
+    return "Talk me about your Game ;)"
+  end
+
 end

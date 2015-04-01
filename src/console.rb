@@ -66,35 +66,48 @@ module Console
   end
 
   def show_logo
-    SetColor.call(self.stdout,  0x000b|0)
-    puts  '
-                         ___          ___          ___
-                        /\  \        /\  \        /\__\
-                       /::\  \      |::\  \      /:/ _/_
-                      /:/\:\__\     |:|:\  \    /:/ /\__\
-                     /:/ /:/  /   __|:|\:\  \  /:/ /:/ _/_
-                    /:/_/:/__/___/::::|_\:\__\/:/_/:/ /\__\
-                    \:\/:::::/  /\:\~~\  \/__/\:\/:/ /:/  /
-                     \::/~~/~~~~  \:\  \       \::/_/:/  /
-                      \:\~~\       \:\  \       \:\/:/  /
-                       \:\__\       \:\__\       \::/  /
-                        \/__/        \/__/        \/__/ '
-    SetColor.call(self.stdout,  0x000d|0)
-    Kernel.sleep(1)
-    puts '
-                __            _  __     __            ___      ____
-               / /_   __  __ (_)/ /____/ /___   _____|__ \    / __ \
-              / __ \ / / / // // // __  // _ \ / ___/__/ /   / / / /
-             / /_/ // /_/ // // // /_/ //  __// /   / __/ _ / /_/ /
-            /_.___/ \__,_//_//_/ \__,_/ \___//_/   /____/(_)\____/  '
-    puts "\n"
-    Kernel.sleep(1)
-    SetColor.call(self.stdout, 0x000e|0)
-    puts "             This software is a free software released under LGPL\n\n\n"
-    puts "\n\n"
-    Kernel.sleep(1)
-    SetColor.call(self.stdout, 0x0007|0)
+    Kernel.sleep(0.5)
+    load_rme =  '
+                       ___          ___          ___
+                      /\  \        /\  \        /\__\
+                     /::\  \      |::\  \      /:/ _/_
+                    /:/\:\__\     |:|:\  \    /:/ /\__\
+                   /:/ /:/  /   __|:|\:\  \  /:/ /:/ _/_
+                  /:/_/:/__/___/::::|_\:\__\/:/_/:/ /\__\
+                  \:\/:::::/  /\:\~~\  \/__/\:\/:/ /:/  /
+                   \::/~~/~~~~  \:\  \       \::/_/:/  /
+                    \:\~~\       \:\  \       \:\/:/  /
+                     \:\__\       \:\__\       \::/  /
+                      \/__/        \/__/        \/__/ '
+  load_builder = '
+              __            _  __     __            ___      ____
+             / /_   __  __ (_)/ /____/ /___   _____|__ \    / __ \
+            / __ \ / / / // // // __  // _ \ / ___/__/ /   / / / /
+           / /_/ // /_/ // // // /_/ //  __// /   / __/ _ / /_/ /
+          /_.___/ \__,_//_//_/ \__,_/ \___//_/   /____/(_)\____/  '
+
+  [0x0001, 0x0009, 0x0002, 0x000a, 0x000E, 0x000F, 0x000E, 0x000A].each do |i|
+    clear
+    SetColor.call(self.stdout, i)
+    puts load_rme
+    Kernel.sleep(0.05)
   end
+  [0x0001, 0x0005, 0x000D, 0x000C].each do |i|
+    clear
+    SetColor.call(self.stdout,  0x000A)
+    puts load_rme
+    SetColor.call(self.stdout,  i)
+    puts load_builder
+    Kernel.sleep(0.05)
+  end
+  Kernel.sleep(0.5)
+  puts "\n"
+  SetColor.call(self.stdout, 0x0003)
+  puts "             This software is a free software released under LGPL\n\n\n"
+  puts "\n\n"
+  Kernel.sleep(0.5)
+  SetColor.call(self.stdout, 0x0007)
+end
 
 end
 
