@@ -21,6 +21,8 @@ module Config
 
   INLINE_CHAR   = '■'
   EXTENDED_CHAR = '▼'
+  BEGIN_FLAG    = '[▼RMEBUILDED]'
+  END_FLAG      = '[▲RMEBUILDED]'
 
 end
 
@@ -161,7 +163,20 @@ module FileTools
   end
 end
 
-S = ["rock", "paper", "scissors", "EX AEQUO", "YOU WIN", "YOU LOSE", 8, 10, 12, 0, 0]
+module Path
+	extend self
+	def waypoint(from, to)
+		from 	= File.absolute_path(from).split(File::SEPARATOR)
+		to 		= File.absolute_path(to).split(File::SEPARATOR)
+		junc	= from.take_while do |elt|
+			i = from.index(elt)
+			elt == to[i]
+		end
+		before, after = *[from, to].map{|k| k - junc}
+		result = (before.map{|_| '..'} + after).join(File::SEPARATOR)
+		result
+	end
+end
 
 module Doctor
 

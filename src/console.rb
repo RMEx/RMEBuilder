@@ -41,12 +41,6 @@ module Console
     SetColor.call(self.stdout, 0x0007|0)
   end
 
-  def print_color(txt, color)
-    SetColor.call(self.stdout, color|0)
-    print txt
-    SetColor.call(self.stdout, 0x0007|0)
-  end
-
   def two_colors(a, b, ca, cb)
     SetColor.call(self.stdout, ca|0)
     print a

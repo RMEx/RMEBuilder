@@ -20,8 +20,12 @@ class Builder
   class << self
     attr_accessor :force_update
     attr_accessor :to_install
+    attr_accessor :stack_error
+    attr_accessor :schema_final
     Builder.force_update = false
     Builder.to_install = []
+    Builder.stack_error = []
+    Builder.schema_final = []
   end
 end
 
@@ -29,8 +33,9 @@ module Kernel
   def force_update
     Builder.force_update = true
   end
-  def add_package(name)
-    Builder.to_install << name
+  def package(name)
+    kname = name.is_a?(Array) ? name : [:std, name]
+    Builder.to_install << kname
   end
   def inline(name)
     [:inline, name]
@@ -71,6 +76,7 @@ def perform(name)
     k = Packages.all.keys.sort_by {|a| a.downcase.leven(name)}
     Console.alert "\t\"#{name}\" is not an existant package."
     Console.refutable "\tDid you mean maybe \"#{k[0]}\" ?"
+    Builder.stack_error << [name, :unbound]
   end
 end
 
@@ -90,12 +96,6 @@ def prompt
           Console.refutable "\t#{pkg}"
         end
       end
-
-    when *S[0..2] then
-      Console.refutable "RMEBuilder> " + S[a=rand(3)]
-      Kernel.sleep(0.5)
-      Console.print_color("\n\t"+S[3+b=(S.index(result)-a)%3], S[6+b])
-      Console.print_color(" [#{S[9] += b%2}-#{S[10] += b/2}]\n", 8)
 
     when 'download 100k_bank_account' then
       Console.alert "\n\tI'm the NSA and I SEE YOU"
@@ -147,6 +147,28 @@ def prompt
       init
 
     when /Ah.*/ then Console.warning "\n\tThe women could'nt make cabane?\n\n"
+
+    when /build\s*(.*)/ then
+      f = $1 == "dev"
+      Builder.stack_error = []
+      Builder.schema_final = []
+      Builder.to_install.each do |type, name|
+        if Dir.exist?(CUSTOM_PATH.addSlash+name)
+          Console.refutable "Grep RME"
+          Builder.schema_final << [:custom, type, name]
+          Console.success "\t#{name} is locally present"
+        else
+          perform(name){|n| Package.download(n)}
+          Builder.schema_final << [:local, type, name]
+        end
+      end
+      if Builder.stack_error.length > 0 then
+        puts ""
+        Console.alert "\tBuild failure for this packages\n"
+        Builder.stack_error.each {|k, v| Console.refutable "\t\t* #{k}"}
+      else
+        Compiler.start(f)
+      end
 
     when '--help', 'help' then
       puts ""

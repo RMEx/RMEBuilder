@@ -34,7 +34,7 @@ class Package
     @name         = hash[:name]
     @version      = hash[:version]      || vsn
     @components   = hash[:components]   || {}
-    @dependancies = hash[:dependancies] || {}
+    @dependancies = hash[:dependancies] || []
     @exclude      = hash[:exclude]      || []
     @authors      = hash[:authors]      || {}
     @description  = hash[:description]  || ""
@@ -49,33 +49,36 @@ end
 
 
 module Packages
-  attr_accessor :locals, :all
-  Packages.locals =
-    (File.exist?(REP_TRACE)) ?
-    (Hash[FileTools.eval_file(REP_TRACE).map {|k,v| [k, eval(v)]}]) : {}
+  class << self
+    attr_accessor :locals, :all
 
-  def exist?(name)
-    list.has_key?(name)
-  end
+    Packages.locals =
+      (File.exist?(REP_TRACE)) ?
+      (Hash[FileTools.eval_file(REP_TRACE).map {|k,v| [k, eval(v)]}]) : {}
 
-  def map
-    list =
-      Packages.list.map do |name, url|
-        args    = url.split('/')
-        schema  = args.pop
-        uri     = args.join('/')
-        [name, {uri: Http.service_with(uri), schema: schema}]
+      def exist?(name)
+        list.has_key?(name)
       end
-    Packages.all = Hash[list]
-  end
-  map
 
+      def map
+        list =
+        Packages.list.map do |name, url|
+          args    = url.split('/')
+          schema  = args.pop
+          uri     = args.join('/')
+          [name, {uri: Http.service_with(uri), schema: schema}]
+        end
+        Packages.all = Hash[list]
+      end
+    end
+    Packages.map
 end
 
 
 class Package
 
   class << self
+    attr_accessor :s_insert_after
 
     def exist?(name)
       Packages.exist?(name)
@@ -93,7 +96,7 @@ class Package
         FileTools.safe_rmdir(target)
       else
         if Dir.exist?(target)
-          Console.alert "\t#{target} already exist"
+          Console.warning "\t#{target} already exist"
           puts ""
           return
         end
@@ -110,7 +113,8 @@ class Package
         full_name = target + c_name
         init_uri = package[:uri].clone
         init_uri << c_name
-        FileTools.write(full_name, init_uri.get, 'w')
+        k = init_uri.get.dup.force_encoding('utf-8')
+        FileTools.write(full_name, k, 'w')
         Console.success "\t#{full_name} is downloaded"
       end
       resolve_dependancies(schema, dep, update)

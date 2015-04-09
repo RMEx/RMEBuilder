@@ -26,19 +26,13 @@ CUSTOM_PATH = '../customPackages'
 
 # Inner modules
 Kernel.send(:require, SRC_PATH+'/utils.rb')
+Utils.load('../target.rb')
+SCRIPT_RVDATA = '../'+TARGET.addSlash+"Data/Scripts.rvdata2"
 Utils.load('console.rb')
 Utils.load('http.rb')
 Utils.load('version.rb')
+Utils.load('compiler.rb')
 Utils.load('initialize.rb')
 Utils.load('package.rb')
-Utils.load('../target.rb')
-
-# Define destination folder
-def insert_after(x)
-  Package.insert_after = x
-end
-def position
-  Package.insert_after || 'Scene_GameOver'
-end
 Utils.load('../'+TARGET.addSlash + SCHEMA)
 prompt
