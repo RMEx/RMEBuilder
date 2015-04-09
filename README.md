@@ -56,3 +56,32 @@ package("display-text")
 package("nuki-buzzer")
 package("tone-tester")
 ```
+
+### Mettre à jours un paquet
+Il est à tout moment possible de mettre un paquet à jours, en lancant RMEBuilder et en saisissant la commande `update nom_du_paquet`, par exemple `update nuki-buzzer`. L'ancien script sera supprimé et le nouveau téléchargé. Il suffit ensuite de faire (avec le projet fermé dans RPGMaker) `build`.
+
+## Clonage de paquets
+Il est aussi possible de cloner un paquet, pour le placer dans le répertoire `RMEBuilder/customPackages`, lors d'une "build", ce sera toujours le paquet présent dans le customPackage qui aura la priorité.
+
+Cette méthode est pratique pour construire un script, sans avoir besoin de le diffuser sur le net mais aussi pour les scripts qui ont une phase de gestation longue. On peut donc utiliser, dans RMEBuilder, la commande `reclone nom-du-paquet` pour écraser la version clônée localement par la dernière version disponnible.
+
+> Pour réutiliser le paquet de manière classique, sans clônage, il suffit de le supprimer dans le répertoire `RMEBuilder/customPackages`. Un lancement de la commande `build` retéléchargera le paquet dans le répertoire classique des paquets.
+
+## Supprimer un paquet
+Il suffit de supprimer son appel dans `build_schema.rb` et de relancer la commande `build`.
+
+## Chargement dynamiques de paquets
+A chaque modification de script, par exemple, de script clôné, il faut rebuilder le projet. Une solution consiste à utiliser la commande `build dev` plutôt que `build` car elle génère des liens vers les fichiers. On peut donc modifier leurs contenus sans devoir rebuilder à chaque modification. En effet, le Rebuild n'est nécéssaire que lorsque l'on rajoute un fichier dans un paquet ou un paquet.
+
+Il est conseillé d'utiliser, en phase de développement du jeu la commande `build dev` et une fois que le jeu est terminé, la commande `build` pour produire un Scripts.rvdata2 sans aucune dépendance.
+
+## Packager un script
+Pour qu'un script puisse être lu par RMEBuilder, il lui faut un schema, qui se nomme `package.rb`. Vous pouvez vous inspirer du [schéma de RME](https://raw.githubusercontent.com/funkywork/RME/master/src/package.rb) où de celui du [Display text](https://raw.githubusercontent.com/nukiFW/RPGMaker/master/DisplayText/package.rb) (qui introduit des dépendances). Un scripteur n'aura pas trop de mal à comprendre son fonctionnement.
+
+### Propager un script
+Le packaging permet à tout le monde de placer ses scripts dans le répertoire `customPackages`, cependant, pour rendre un script disponnible depuis le web, il suffit de faire une `pullrequest` sur le fichier [https://github.com/funkywork/RMEPackages/blob/master/packages.rb](https://github.com/funkywork/RMEPackages/blob/master/packages.rb) et ajouter dans la liste des paquets un lien (dropbox, github ou ce que vous voulez) vers le package.rb de votre script. Une fois que la requête est validée. Une fois qu'un utilisateur relancera RMEBuilder, sa liste de package sera mise à jours.
+
+> **Attention**, il faut impérativement que vous scripts soient encodés en UTF-8, n'hésitez donc pas à rajouter, en en-tête cette ligne : `# -*- coding: utf-8 -*-`
+
+## Conclusion
+N'hésitez pas à partager vos scripts via ce moyen ! Bonne utilisation
