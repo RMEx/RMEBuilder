@@ -119,7 +119,7 @@ module Compiler
         content = struct.desc + "\n"
         struct.composants.each do |f|
           if self.dev
-            file_dir = Path.waypoint("../"+TARGET, way+f)
+            file_dir = File.absolute_path(way+f)
             content += "Kernel.send(:require, '#{file_dir}')\n".dup.force_encoding('utf-8')
           else
             content += FileTools.read(way+f) + "\n"
@@ -130,7 +130,7 @@ module Compiler
         append_line("#{Config::EXTENDED_CHAR} #{name.upcase}", struct.desc)
         struct.composants.each do |f|
           if self.dev
-            file_dir = Path.waypoint("../"+TARGET, way+f)
+            file_dir = File.absolute_path(way+f)
             content = "Kernel.send(:require, '#{file_dir}')\n".dup.force_encoding('utf-8')
           else
             content = FileTools.read(way+f)

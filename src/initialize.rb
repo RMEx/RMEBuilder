@@ -184,3 +184,7 @@ def prompt
     puts ""
   end
 end
+
+def check_for_updates
+
+end

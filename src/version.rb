@@ -56,6 +56,10 @@ class Version < Struct.new(:major, :sub, :last)
     compare(oth) <= 0
   end
 
+  def raw_inspect
+    "vsn(#{major}, #{sub}, #{last})"
+  end
+
 end
 
 module Kernel
