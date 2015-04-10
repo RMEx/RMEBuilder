@@ -1,1 +1,1 @@
-["../src/compiler.rb", "../src/console.rb", "../src/http.rb", "../src/initialize.rb", "../src/main.rb", "../src/package.rb", "../src/utils.rb", "../src/version.rb"]
+["compiler.rb", "console.rb", "http.rb", "initialize.rb", "main.rb", "package.rb", "utils.rb", "version.rb"]

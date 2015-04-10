@@ -187,15 +187,22 @@ end
 
 def check_for_updates
   return unless Http.connected?
-  pushed_version_str = Http::Service.new(
+  path = Http::Service.new(
     prefix: 'raw.githubusercontent.com',
     port: 443,
-    path: ['funkywork', 'RMEBuilder', 'master', 'current_version.rb']
-  ).get
-  oth_version = eval(pushed_version_str)
+    path: ['funkywork', 'RMEBuilder', 'master']
+  )
+  path_vsn = path.clone
+  path_vsn << "current_version.rb"
+  oth_version = eval(path_vsn.get)
   return if oth_version == CURRENT_VERSION
-  Console.warning "A new version of RMEBuilder (#{oth_version}) is available, UPGRADE(Y/N)?"
+  Console.warning "A new version of RMEBuilder (#{oth_version}) is available, UPGRADE(Y/N)?\n"
   if gets == "Y"
-
+    COMPONENTS.each do |f|
+      #File.delete(f)
+      Console.refutable "\n\t#{f} is purged\n"
+    end
+    path_comp = path.clone
+    path_comp << "components.rb"
   end
 end

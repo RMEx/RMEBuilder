@@ -36,7 +36,7 @@ Utils.load('package.rb')
 Utils.load('../'+TARGET.addSlash + SCHEMA)
 
 CURRENT_VERSION = vsn(2, 0, 0)
-COMPONENTS = Dir.glob("#{SRC_PATH.addSlash}*.rb")
+COMPONENTS = Dir.glob("#{SRC_PATH.addSlash}*.rb").map {|k| k.split('/').last}
 FileTools.write("../current_version.rb", CURRENT_VERSION.raw_inspect, flag = "w")
 FileTools.write("../components.rb", COMPONENTS.inspect, flag = "w")
 check_for_updates
