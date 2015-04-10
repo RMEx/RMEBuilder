@@ -2,6 +2,7 @@
 =begin
 RMEBuilder - Main
 Copyright (C) 2015 Nuki <xaviervdw AT gmail DOT com>
+Copyright (C) 2015 Joke <joke AT biloucorp DOT com>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -35,7 +36,7 @@ Utils.load('initialize.rb')
 Utils.load('package.rb')
 Utils.load('../'+TARGET.addSlash + SCHEMA)
 
-CURRENT_VERSION = vsn(2, 0, 1)
+CURRENT_VERSION = vsn(2, 0, 2)
 COMPONENTS = Dir.glob("#{SRC_PATH.addSlash}*.rb").map {|k| k.split('/').last}
 FileTools.write("../current_version.rb", CURRENT_VERSION.raw_inspect, flag = "w")
 FileTools.write("../components.rb", COMPONENTS.inspect, flag = "w")

@@ -2,6 +2,7 @@
 =begin
 RMEBuilder - Initialize
 Copyright (C) 2015 Nuki <xaviervdw AT gmail DOT com>
+Copyright (C) 2015 Joke <joke AT biloucorp DOT com>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
