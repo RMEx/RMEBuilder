@@ -196,10 +196,10 @@ def check_for_updates
   path_vsn << "current_version.rb"
   oth_version = eval(path_vsn.get)
   return if oth_version == CURRENT_VERSION
-  Console.warning "A new version of RMEBuilder (#{oth_version}) is available. \nUPGRADE(Y/N)?\n"
-  if gets == "Y"
+  Console.success "A new version of RMEBuilder (#{oth_version}) is available. \nUPGRADE(Y/N)?\n"
+  if gets.chomp.upcase == "Y"
     COMPONENTS.each do |f|
-      File.delete(f)
+      File.delete(SRC_PATH.addSlash + f)
       Console.refutable "\t#{f} is purged\n"
     end
     path_comp = path.clone
