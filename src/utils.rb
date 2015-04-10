@@ -21,8 +21,8 @@ module Config
 
   INLINE_CHAR   = '■'
   EXTENDED_CHAR = '▼'
-  BEGIN_FLAG    = '[▼RMEBUILDED]'
-  END_FLAG      = '[▲RMEBUILDED]'
+  BEGIN_FLAG    = '[▼RMEBUILT]'
+  END_FLAG      = '[▲RMEBUILT]'
 
 end
 

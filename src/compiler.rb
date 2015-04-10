@@ -120,7 +120,7 @@ module Compiler
         struct.composants.each do |f|
           if self.dev
             file_dir = Path.waypoint("../"+TARGET, way+f)
-            content += "Kernel.send(:require, '#{file_dir}')".dup.force_encoding('utf-8')
+            content += "Kernel.send(:require, '#{file_dir}')\n".dup.force_encoding('utf-8')
           else
             content += FileTools.read(way+f) + "\n"
           end
@@ -131,7 +131,7 @@ module Compiler
         struct.composants.each do |f|
           if self.dev
             file_dir = Path.waypoint("../"+TARGET, way+f)
-            content = "Kernel.send(:require, '#{file_dir}')".dup.force_encoding('utf-8')
+            content = "Kernel.send(:require, '#{file_dir}')\n".dup.force_encoding('utf-8')
           else
             content = FileTools.read(way+f)
           end
