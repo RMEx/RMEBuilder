@@ -204,5 +204,19 @@ def check_for_updates
     end
     path_comp = path.clone
     path_comp << "components.rb"
+    new_components = eval(path_comp.get)
+    path_src = path.clone
+    path_src << "src"
+    new_components.each do |src_f|
+      path_file = path_src.clone
+      path_file << src_f
+      content = path_file.get
+      fname = "#{SRC_PATH.addSlash}#{src_f}"
+      FileTools.write(fname, content, 'w')
+      Console.success "\n\t#{fname} is downloaded\n"
+    end
+    Console.success "\nRME is up to date ! restart the software!\n"
+    gets
+    exit
   end
 end
