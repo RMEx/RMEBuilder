@@ -57,7 +57,7 @@ class Version < Struct.new(:major, :sub, :last)
   end
 
   def raw_inspect
-    "Version.new(#{major}, #{sub}, #{last})"
+    "vsn(#{major}, #{sub}, #{last})"
   end
 
 end

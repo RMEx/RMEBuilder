@@ -186,11 +186,16 @@ def prompt
 end
 
 def check_for_updates
+  return unless Http.connected?
   pushed_version_str = Http::Service.new(
     prefix: 'raw.githubusercontent.com',
     port: 443,
     path: ['funkywork', 'RMEBuilder', 'master', 'current_version.rb']
   ).get
   oth_version = eval(pushed_version_str)
-  p [CURRENT_VERSION, oth_version]
+  return if oth_version == CURRENT_VERSION
+  Console.warning "A new version of RMEBuilder (#{oth_version}) is available, UPGRADE(Y/N)?"
+  if gets == "Y"
+
+  end
 end

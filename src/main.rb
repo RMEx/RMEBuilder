@@ -23,7 +23,6 @@ REP_PATH    = '../.local'
 REP_LIST    = REP_PATH + '/list.rb'
 REP_TRACE   = REP_PATH + '/trace.rb'
 CUSTOM_PATH = '../customPackages'
-CURRENT_VERSION = vsn(2, 0, 0)
 # Inner modules
 Kernel.send(:require, SRC_PATH+'/utils.rb')
 Utils.load('../target.rb')
@@ -36,6 +35,9 @@ Utils.load('initialize.rb')
 Utils.load('package.rb')
 Utils.load('../'+TARGET.addSlash + SCHEMA)
 
+CURRENT_VERSION = vsn(2, 0, 0)
+COMPONENTS = Dir.glob("#{SRC_PATH.addSlash}*.rb")
 FileTools.write("../current_version.rb", CURRENT_VERSION.raw_inspect, flag = "w")
+FileTools.write("../components.rb", COMPONENTS.inspect, flag = "w")
 check_for_updates
 prompt
