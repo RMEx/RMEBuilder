@@ -186,5 +186,11 @@ def prompt
 end
 
 def check_for_updates
-
+  pushed_version_str = Http::Service.new(
+    prefix: 'raw.githubusercontent.com',
+    port: 443,
+    path: ['funkywork', 'RMEBuilder', 'master', 'current_version.rb']
+  ).get
+  oth_version = eval(pushed_version_str)
+  p [CURRENT_VERSION, oth_version]
 end
