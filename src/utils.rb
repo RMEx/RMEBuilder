@@ -28,6 +28,23 @@ end
 
 class String
 
+  MultiByteToWideChar = Win32API.new('kernel32', 'MultiByteToWideChar', 'LLPLPL', 'L')
+  WideCharToMultiByte = Win32API.new('kernel32', 'WideCharToMultiByte', 'LLPLPLPP', 'L')
+
+  def to_wsc
+    len = MultiByteToWideChar.call(65_001, 0, self, -1, 0, 0)
+    wcs = Utils.alloc_buffer(len * 2)
+    MultiByteToWideChar.call(65_001, 0, self, -1, wcs, len)
+    wcs
+  end
+
+  def of_wsc
+    len = WideCharToMultiByte.call(65_001, 0, self, -1, 0, 0, 0, 0)
+    str = Utils.alloc_buffer(len - 1)
+    WideCharToMultiByte.call(65_001, 0, self, -1, str, len, 0, 0)
+    str
+  end
+
   def leven(other)
    n, m = self.length, other.length
    return m if n == 0
@@ -77,6 +94,10 @@ end
 
 module Utils
   extend self
+
+  def alloc_buffer(size)
+    "\0" * size
+  end
 
   # load an external library
   def load(file)

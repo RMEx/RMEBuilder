@@ -16,6 +16,30 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
+HWND = Win32API.new('user32', 'FindWindow', 'pp', 'i').call('RGSS Player', 0)
+
+module Browser
+
+  SHBrowseForFolder = Win32API.new('shell32', 'SHBrowseForFolderW', 'P', 'L')
+  SHGetPathFromIDList = Win32API.new('shell32', 'SHGetPathFromIDListW', 'LP', 'L')
+  CoTaskMemFree = Win32API.new('ole32', 'CoTaskMemFree', 'L', 'V')
+
+  extend self
+  def launch
+    flags = 0x0000_0001|(0x0000_0010|0x0000_0040)
+    d = [HWND, 0, 0, "Chose a project folder".to_wsc, flags, 0, 0, 0].pack('LLLpLLl')
+    pidlist = SHBrowseForFolder.call(d)
+    if pidlist == 0
+      ''
+    else
+      path = Utils.alloc_buffer(260 * 2)
+      r = SHGetPathFromIDList.call(pidlist, path)
+      path.of_wsc
+    end
+  end
+
+end
+
 module Console
 
   attr_accessor :stdout

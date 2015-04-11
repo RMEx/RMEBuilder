@@ -233,6 +233,14 @@ def prompt
         Compiler.start(f)
       end
 
+    when "define target" then
+      result = Browser.launch.split('\\').join(File::SEPARATOR)
+      FileTools.write("../last_waypoint.rb", result, 'w')
+      Console.success "\nSoftware must be restarted\n"
+      Console::SetFG.call(Console::GetConsole.call)
+      gets
+      exit
+
     when *S[0..2] then
       Console.refutable "RMEBuilder> " + S[a=rand(3)]
       Kernel.sleep(0.5)

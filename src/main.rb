@@ -27,23 +27,32 @@ CUSTOM_PATH = '../customPackages'
 S = ["rock", "paper", "scissors", "EX AEQUO", "YOU WIN", "YOU LOSE", 8, 10, 12, 0, 0]
 # Inner modules
 Kernel.send(:require, SRC_PATH+'/utils.rb')
-Utils.load('../target.rb')
-SCRIPT_RVDATA = '../'+TARGET.addSlash+"Data/Scripts.rvdata2"
-SCHEMA        = '../'+TARGET.addSlash+'build_schema.rb'
-unless File.exist?(SCHEMA)
-  FileTools.write(SCHEMA, "")
-end
+
 Utils.load('console.rb')
 Utils.load('http.rb')
 Utils.load('version.rb')
 Utils.load('compiler.rb')
 Utils.load('initialize.rb')
 Utils.load('package.rb')
-Utils.load(SCHEMA)
 
-CURRENT_VERSION = vsn(2, 1, 0)
+CURRENT_VERSION = vsn(2, 1, 5)
 COMPONENTS = Dir.glob("#{SRC_PATH.addSlash}*.rb").map {|k| k.split('/').last}
 FileTools.write("../current_version.rb", CURRENT_VERSION.raw_inspect, flag = "w")
 FileTools.write("../components.rb", COMPONENTS.inspect, flag = "w")
 check_for_updates
+unless File.exist?("../last_waypoint.rb")
+  result = Browser.launch.split('\\').join(File::SEPARATOR)
+  FileTools.write("../last_waypoint.rb", result, 'w')
+end
+TARGET = File.read("../last_waypoint.rb")
+Console::SetFG.call(Console::GetConsole.call)
+SCRIPT_RVDATA = TARGET.addSlash+"Data/Scripts.rvdata2"
+SCHEMA        = TARGET.addSlash+'build_schema.rb'
+unless File.exist?(SCHEMA)
+  FileTools.write(SCHEMA, "")
+end
+Kernel.send(:require, SCHEMA)
+
+
+
 prompt
