@@ -24,7 +24,7 @@ class Builder
     attr_accessor :stack_error
     attr_accessor :schema_final
     Builder.force_update = false
-    Builder.to_install = []
+    Builder.to_install = {}
     Builder.stack_error = []
     Builder.schema_final = []
   end
@@ -34,12 +34,34 @@ module Kernel
   def force_update
     Builder.force_update = true
   end
+  def save_build_schema
+    r = ""
+    Builder.to_install.each do |name, type|
+      r += "package(#{(type == :inline)? "inline " : ""}'#{name}')\n"
+    end
+    r += "\#Coucou !"
+    FileTools.write(SCHEMA, r, 'w')
+  end
   def package(name)
     kname = name.is_a?(Array) ? name : [:std, name]
-    Builder.to_install << kname
+    Builder.to_install[kname[1]] = kname[0]
+    save_build_schema
   end
+  def prepend(name)
+    kname = name.is_a?(Array) ? name : [:std, name]
+    Builder.to_install = {kname[1] => kname[0]}.merge(Builder.to_install)
+    save_build_schema
+  end
+  alias_method :append, :package
   def inline(name)
     [:inline, name]
+  end
+
+  def show_schema
+    puts "\n\tbuild-schema.rb:\n"
+    Builder.to_install.each do |name, type|
+      Console.refutable "\t#{name} #{(type == :inline) ? "(inline)" : ""}"
+    end
   end
 end
 
@@ -88,6 +110,52 @@ def prompt
     result = gets.chomp
     case result
 
+    when 'show schema' then
+      show_schema
+
+    when /remove (.*)/ then
+      if Builder.to_install.delete($1)
+        save_build_schema
+        Console.success "\n\t#{$1} has been removed.\n"
+        show_schema
+      else
+        Console.alert "\n\t#{$1} is not in the package stack.\n"
+      end
+
+    when /move (.*) (up|down)/
+      name = $1
+      pos = $2
+      if Builder.to_install.has_key?(name)
+        a = Builder.to_install.to_a
+        junction = a.index {|k| k[0] == name}
+        elt = a.delete(a[junction])
+        f = junction + ((pos == "up") ? -1 : 1)
+        a.insert(f, elt)
+        Builder.to_install = Hash[a]
+        save_build_schema
+        Console.success "\n\t#{name} has been moved #{pos}.\n"
+        show_schema
+      else
+        Console.alert "\n\t#{$1} is not in the package stack.\n"
+      end
+
+    when /(append|prepend|add) (.*)/ then
+      f = $2.split.map do |k|
+        unless k == 'inline'
+          then "'#{k}'"
+          else k end
+      end
+      meth = ($1 == "add") ? (($2 == "RME") ? "prepend" : "append") : $1
+      res = eval(f.join(' '))
+      name = res.is_a?(Array) ? res[1] : res
+      unless Builder.to_install.has_key?(name)
+        Kernel.send(meth, res)
+        Console.success "\n\t#{name} has been added.\n"
+        show_schema
+      else
+        Console.warning "\n\t#{name} is already in the package list.\n"
+      end
+
     when /show all.*/, 'show' then
       puts ""
       Packages.all.keys.sort_by{|a| a.downcase}.each do |pkg|
@@ -101,12 +169,6 @@ def prompt
     when 'download 100k_bank_account' then
       Console.alert "\n\tI'm the NSA and I SEE YOU"
 
-    when 'download_according_schema', 'download *' then
-      Builder.to_install.each {|k| perform(k) do
-        |n|
-        n = n[1] if k.is_a?(Array)
-        Package.download(n)
-      end}
 
     when 'update_according_schema', 'update *' then
       Builder.to_install.each {|k| perform(k) do
@@ -153,7 +215,7 @@ def prompt
       f = $1 == "dev"
       Builder.stack_error = []
       Builder.schema_final = []
-      Builder.to_install.each do |type, name|
+      Builder.to_install.each do |name, type|
         if Dir.exist?(CUSTOM_PATH.addSlash+name)
           Console.refutable "Grep RME"
           Builder.schema_final << [:custom, type, name]
@@ -170,6 +232,12 @@ def prompt
       else
         Compiler.start(f)
       end
+
+    when *S[0..2] then
+      Console.refutable "RMEBuilder> " + S[a=rand(3)]
+      Kernel.sleep(0.5)
+      Console.print_color("\n\t"+S[3+b=(S.index(result)-a)%3], S[6+b])
+      Console.print_color(" [#{S[9] += b%2}-#{S[10] += b/2}]\n", 8)
 
     when '--help', 'help' then
       puts ""

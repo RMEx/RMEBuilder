@@ -115,7 +115,7 @@ module Compiler
     append_line(Config::BEGIN_FLAG, "")
     self.compiled_data.each do |name, struct|
       way = retreive_dir(struct.repo, name)
-      if struct.type == :inline
+      if struct.type == :inline || struct.composants.length == 1
         content = struct.desc + "\n"
         struct.composants.each do |f|
           if self.dev

@@ -4,4 +4,3 @@
 =end
 
 TARGET = "../ProjectExample"
-SCHEMA = "build_schema.rb"
