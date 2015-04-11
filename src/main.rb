@@ -35,7 +35,18 @@ Utils.load('compiler.rb')
 Utils.load('initialize.rb')
 Utils.load('package.rb')
 
-CURRENT_VERSION = vsn(2, 1, 5)
+CURRENT_VERSION = vsn(2, 1, 6)
+ABOUT = [
+  "RMEBuilder v.#{CURRENT_VERSION}",
+  'Free software released under GNU Lesser General Public License',
+  'Copyright (C) 2015 Nuki <xaviervdw AT gmail DOT com>',
+  'Copyright (C) 2015 Joke <joke AT biloucorp DOT com>',
+  '',
+  'RMEBuilder is a featureful package manager for RPG Maker VX Ace',
+  '',
+  'Github: https://github.com/funkywork/RMEBuilder',
+  'Submit your own packages: https://github.com/funkywork/RMEPackages'
+  ]
 COMPONENTS = Dir.glob("#{SRC_PATH.addSlash}*.rb").map {|k| k.split('/').last}
 FileTools.write("../current_version.rb", CURRENT_VERSION.raw_inspect, flag = "w")
 FileTools.write("../components.rb", COMPONENTS.inspect, flag = "w")

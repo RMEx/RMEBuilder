@@ -247,6 +247,8 @@ def prompt
       Console.print_color("\n\t"+S[3+b=(S.index(result)-a)%3], S[6+b])
       Console.print_color(" [#{S[9] += b%2}-#{S[10] += b/2}]\n", 8)
 
+    when 'about' then puts ''; ABOUT.each {|line| Console.refutable "\t"+line}
+
     when '--help', 'help' then
       puts ""
       Console.two_colors "\tDownload a package:\t", "download <package-name>\n", 0x0008, 0x000e
