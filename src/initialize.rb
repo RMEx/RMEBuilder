@@ -31,6 +31,11 @@ class Builder
 end
 
 module Kernel
+  def restart
+    Thread.new { system("start #{File.realpath('../bin/Game.exe')} console") }
+    sleep(0.1)
+    exit
+  end
   def force_update
     Builder.force_update = true
   end
@@ -39,7 +44,6 @@ module Kernel
     Builder.to_install.each do |name, type|
       r += "package(#{(type == :inline)? "inline " : ""}'#{name}')\n"
     end
-    r += "\#Coucou !"
     FileTools.write(SCHEMA, r, 'w')
   end
   def package(name)
@@ -103,6 +107,22 @@ def perform(name)
   end
 end
 
+def target_selection
+  Console.refutable "Please chose a project folder..."
+  result = Browser.launch.split('\\').join(File::SEPARATOR)
+  if result == ""
+    Console.alert "No directory selected."
+    Console::SetFG.call(Console::GetConsole.call)
+  else
+    FileTools.write("../last_waypoint.rb", result, 'w')
+    Console.success "\n\tNew target: #{result}\n"
+    Console.warning "\nRMEBuilder need to restart. Press <ENTER> to restart the software!\n"
+    Console::SetFG.call(Console::GetConsole.call)
+    gets
+    restart
+  end
+end
+
 def prompt
   Console.show_logo
   loop do
@@ -110,8 +130,11 @@ def prompt
     result = gets.chomp
     case result
 
-    when 'show schema' then
+    when 'schema', 'show schema' then
       show_schema
+
+    when 'restart' then
+      restart
 
     when /remove (.*)/ then
       if Builder.to_install.delete($1)
@@ -166,10 +189,6 @@ def prompt
         end
       end
 
-    when 'download 100k_bank_account' then
-      Console.alert "\n\tI'm the NSA and I SEE YOU"
-
-
     when 'update_according_schema', 'update *' then
       Builder.to_install.each {|k| perform(k) do
         |n|
@@ -191,6 +210,9 @@ def prompt
       Kernel.sleep(0.5)
       Console.show_logo
 
+    when 'download 100k_bank_account' then
+      Console.alert "\n\tI'm the NSA and I SEE YOU"
+
     when 'doctor' then
       Console.warning "\n\t Hi, i'm RMEDoctor, I'm really useless and i Have some bugs :D ...\n\n"
       q = ""
@@ -203,7 +225,7 @@ def prompt
     when /clone (.*)/
       then perform($1){|n| Package.clone(n)}
 
-    when '--quit', 'quit' then exit
+    when '--quit', 'quit', 'exit' then exit
 
     when 'purge' then
       FileTools.remove_recursive(REP_PATH, true)
@@ -233,13 +255,7 @@ def prompt
         Compiler.start(f)
       end
 
-    when "define target" then
-      result = Browser.launch.split('\\').join(File::SEPARATOR)
-      FileTools.write("../last_waypoint.rb", result, 'w')
-      Console.success "\nSoftware must be restarted\n"
-      Console::SetFG.call(Console::GetConsole.call)
-      gets
-      exit
+    when 'target', 'define target', 'set target' then target_selection
 
     when *S[0..2] then
       Console.refutable "RMEBuilder> " + S[a=rand(3)]
@@ -249,7 +265,7 @@ def prompt
 
     when 'about' then puts ''; ABOUT.each {|line| Console.refutable "\t"+line}
 
-    when '--help', 'help' then
+    when '--help', 'help', 'h' then
       puts ""
       Console.two_colors "\tDownload a package:\t", "download <package-name>\n", 0x0008, 0x000e
       Console.two_colors "\tClone a package:\t", "clone <package-name>\n", 0x0008, 0x000e
@@ -294,8 +310,8 @@ def check_for_updates
       FileTools.write(fname, content, 'w')
       Console.success "\t#{fname} is downloaded\n"
     end
-    Console.success "\nRME is up to date ! restart the software!\n"
+    Console.success "\nRMEBuilder is up to date ! Press <ENTER> to restart the software!\n"
     gets
-    exit
+    restart
   end
 end

@@ -52,10 +52,10 @@ FileTools.write("../current_version.rb", CURRENT_VERSION.raw_inspect, flag = "w"
 FileTools.write("../components.rb", COMPONENTS.inspect, flag = "w")
 check_for_updates
 unless File.exist?("../last_waypoint.rb")
-  result = Browser.launch.split('\\').join(File::SEPARATOR)
-  FileTools.write("../last_waypoint.rb", result, 'w')
+  Console.success "Welcome, user."
+  target_selection
 end
-TARGET = File.read("../last_waypoint.rb")
+TARGET = File.read("../last_waypoint.rb") rescue target_selection
 Console::SetFG.call(Console::GetConsole.call)
 SCRIPT_RVDATA = TARGET.addSlash+"Data/Scripts.rvdata2"
 SCHEMA        = TARGET.addSlash+'build_schema.rb'
