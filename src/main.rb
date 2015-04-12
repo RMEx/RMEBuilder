@@ -51,10 +51,6 @@ COMPONENTS = Dir.glob("#{SRC_PATH.addSlash}*.rb").map {|k| k.split('/').last}
 FileTools.write("../current_version.rb", CURRENT_VERSION.raw_inspect, flag = "w")
 FileTools.write("../components.rb", COMPONENTS.inspect, flag = "w")
 check_for_updates
-unless File.exist?("../last_waypoint.rb")
-  Console.success "Welcome, user."
-  target_selection
-end
 TARGET = File.read("../last_waypoint.rb") rescue target_selection
 Console::SetFG.call(Console::GetConsole.call)
 SCRIPT_RVDATA = TARGET.addSlash+"Data/Scripts.rvdata2"
