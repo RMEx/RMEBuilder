@@ -118,7 +118,6 @@ module Utils
     Object.const_set(exception_name, Class.new(Exception))
   end
 
-
 end
 
 #==============================================================================
