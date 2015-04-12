@@ -32,9 +32,10 @@ end
 
 module Kernel
   def restart
-    Thread.new { system("start #{File.realpath('../bin/Game.exe')} console") }
+    path = 'start "" "' + File.realpath('../bin/Game.exe') + '" console'
+    Thread.new { system(path) }
     sleep(0.1)
-    exit
+    Process.exit!(true)
   end
   def force_update
     Builder.force_update = true
@@ -108,11 +109,18 @@ def perform(name)
 end
 
 def target_selection
-  Console.refutable "Please chose a project folder..."
+  if File.exist?("../last_waypoint.rb")
+    current = File.read("../last_waypoint.rb")
+    Console.refutable "\n\tCurrent target: \"#{current}\"\n"
+    Console.warning "\nChange the target ? (Y/N)"
+    return unless gets.chomp.upcase == "Y"
+  end
+  Console.refutable "\nPlease chose a project folder..."
   result = Browser.launch.split('\\').join(File::SEPARATOR)
   if result == ""
     Console.alert "No directory selected."
     Console::SetFG.call(Console::GetConsole.call)
+    target_selection
   else
     FileTools.write("../last_waypoint.rb", result, 'w')
     Console.success "\n\tNew target: #{result}\n"
@@ -267,14 +275,28 @@ def prompt
 
     when '--help', 'help', 'h' then
       puts ""
-      Console.two_colors "\tDownload a package:\t", "download <package-name>\n", 0x0008, 0x000e
-      Console.two_colors "\tClone a package:\t", "clone <package-name>\n", 0x0008, 0x000e
+      Console.two_colors "\tBuild project target:\t", "target\n", 0x0008, 0x000e
+      puts ""
+      Console.two_colors "\tShow all packages:\t", "show\n", 0x0008, 0x000e
+      Console.two_colors "\tShow build schema:\t", "schema\n", 0x0008, 0x000e
+      puts ""
+      Console.two_colors "\tAdd package to schema:\t", "add <package-name>\n", 0x0008, 0x000e
+      Console.two_colors "\t\t\t\t", "append <package-name>\n", 0x0008, 0x000e
+      Console.two_colors "\t\t\t\t", "prepend <package-name>\n", 0x0008, 0x000e
+      Console.refutable "\t\t\t\tPossible option 'inline'.\n"
+      Console.refutable "\t\t\t\tSample: add inline <package-name>\n"
+      puts ""
+      Console.two_colors "\tBuild schema to project: ", "build\n", 0x0008, 0x000e
+      puts ""
+      Console.two_colors "\tMove up/down package:\t", "move <package-name> up|down\n", 0x0008, 0x000e
       Console.two_colors "\tUpdate a package:\t", "update <package-name>\n", 0x0008, 0x000e
+      Console.two_colors "\tClone a package:\t", "clone <package-name>\n", 0x0008, 0x000e
       Console.two_colors "\tReclone a package:\t", "reclone <package-name>\n", 0x0008, 0x000e
-      Console.two_colors "\tShow all packages:\t", "show all\n", 0x0008, 0x000e
+      puts ""
       Console.two_colors "\tQuit:\t\t\t", "quit\n", 0x0008, 0x000e
+      Console.two_colors "\tRestart:\t\t", "restart\n", 0x0008, 0x000e
     else
-      Console.refutable "enter --help for informations"
+      Console.refutable "Enter 'help' for informations"
     end
     puts ""
   end
