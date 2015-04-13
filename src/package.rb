@@ -133,6 +133,32 @@ class Package
       download(name, CUSTOM_PATH, update, REP_PATH)
     end
 
+    def get_info(name)
+      unless exist?(name)
+        return Console.alert "\n\t#{name} is not in the package stack.\n"
+      end
+      package = Packages.all[name]
+      uri = package[:uri].clone
+      uri << package[:schema]
+      schema_content = uri.get
+      schema = eval(schema_content)
+      Console.warning "\n\tName:"
+      Console.refutable "\t " + schema.name
+      Console.warning "\n\tDescription:"
+      Console.refutable "\t " + schema.description
+      Console.warning "\n\tAuthors:"
+      schema.authors.each do |nick, email|
+          desc = "\t #{nick} "
+          desc += "<#{email}>" if email.length > 2
+          desc += "\n"
+          Console.refutable desc
+      end
+      Console.warning "\n\tComponents:"
+      schema.components.each do |c_name|
+        Console.refutable "\t " + c_name
+      end
+    end
+
   end
 
 end

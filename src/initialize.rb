@@ -230,6 +230,7 @@ def prompt
         Console.warning "\n\t#{Doctor.answer(q)}\n\n"
       end
       Console.warning "\n\tSee you soon :D\n\n"
+
     when /clone (.*)/
       then perform($1){|n| Package.clone(n)}
 
@@ -273,12 +274,16 @@ def prompt
 
     when 'about' then puts ''; ABOUT.each {|line| Console.refutable "\t"+line}
 
+    when /about (.*)/
+      then Package.get_info($1)
+
     when '--help', 'help', 'h' then
       puts ""
       Console.two_colors "\tBuild project target:\t", "target\n", 0x0008, 0x000e
       puts ""
       Console.two_colors "\tShow all packages:\t", "show\n", 0x0008, 0x000e
-      Console.two_colors "\tShow build schema:\t", "schema\n", 0x0008, 0x000e
+      puts ""
+      Console.two_colors "\tInfo about a package:\t", "about <package-name>\n", 0x0008, 0x000e
       puts ""
       Console.two_colors "\tAdd package to schema:\t", "add <package-name>\n", 0x0008, 0x000e
       Console.two_colors "\t\t\t\t", "append <package-name>\n", 0x0008, 0x000e
@@ -286,12 +291,15 @@ def prompt
       Console.refutable "\t\t\t\tPossible option 'inline'.\n"
       Console.refutable "\t\t\t\tSample: add inline <package-name>\n"
       puts ""
-      Console.two_colors "\tBuild schema to project: ", "build\n", 0x0008, 0x000e
-      puts ""
       Console.two_colors "\tMove up/down package:\t", "move <package-name> up|down\n", 0x0008, 0x000e
       Console.two_colors "\tUpdate a package:\t", "update <package-name>\n", 0x0008, 0x000e
       Console.two_colors "\tClone a package:\t", "clone <package-name>\n", 0x0008, 0x000e
       Console.two_colors "\tReclone a package:\t", "reclone <package-name>\n", 0x0008, 0x000e
+      Console.two_colors "\tRemove a package:\t", "remove <package-name>\n", 0x0008, 0x000e
+      puts ""
+      Console.two_colors "\tShow build schema:\t", "schema\n", 0x0008, 0x000e
+      puts ""
+      Console.two_colors "\tBuild schema to project: ", "build\n", 0x0008, 0x000e
       puts ""
       Console.two_colors "\tQuit:\t\t\t", "quit\n", 0x0008, 0x000e
       Console.two_colors "\tRestart:\t\t", "restart\n", 0x0008, 0x000e
