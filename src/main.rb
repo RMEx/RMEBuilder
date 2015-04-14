@@ -35,7 +35,7 @@ Utils.load('compiler.rb')
 Utils.load('initialize.rb')
 Utils.load('package.rb')
 
-CURRENT_VERSION = vsn(2, 1, 6)
+CURRENT_VERSION = vsn(2, 1, 7)
 ABOUT = [
   "RMEBuilder v.#{CURRENT_VERSION}",
   'Free software released under GNU Lesser General Public License',
