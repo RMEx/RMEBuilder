@@ -240,7 +240,7 @@ def prompt
       FileTools.remove_recursive(REP_PATH, true)
       init
 
-    when /Ah.*/ then Console.warning "\n\tThe women could'nt make cabane?\n\n"
+    when /ah!?.*/i then Console.warning "\n\tDoes that mean that women can't build a hut ?\n\n"
 
     when /build\s*(.*)/ then
       f = $1 == "dev"
