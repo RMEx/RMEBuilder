@@ -44,8 +44,8 @@ ABOUT = [
   '',
   'RMEBuilder is a featureful package manager for RPG Maker VX Ace',
   '',
-  'Github: https://github.com/funkywork/RMEBuilder',
-  'Submit your own packages: https://github.com/funkywork/RMEPackages'
+  'Github: https://github.com/RMEx/RMEBuilder',
+  'Submit your own packages: https://github.com/RMEx/RMEPackages'
   ]
 COMPONENTS = Dir.glob("#{SRC_PATH.addSlash}*.rb").map {|k| k.split('/').last}
 FileTools.write("../current_version.rb", CURRENT_VERSION.raw_inspect, flag = "w")

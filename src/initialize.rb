@@ -73,7 +73,7 @@ end
 FW_LIST = Http::Service.new(
   prefix: 'raw.githubusercontent.com',
   port: 443,
-  path: ['funkywork', 'RMEPackages', 'master', 'packages.rb']
+  path: ['RMEx', 'RMEPackages', 'master', 'packages.rb']
 )
 
 module Sync
@@ -315,7 +315,7 @@ def check_for_updates
   path = Http::Service.new(
     prefix: 'raw.githubusercontent.com',
     port: 443,
-    path: ['funkywork', 'RMEBuilder', 'master']
+    path: ['RMEx', 'RMEBuilder', 'master']
   )
   path_vsn = path.clone
   path_vsn << "current_version.rb"
