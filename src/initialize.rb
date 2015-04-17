@@ -87,6 +87,21 @@ module Sync
     end
   end
 
+  def check_update
+    count = 0
+    Packages.local.each do |pkg, data|
+      if data.version != Packages.get_distant_schema(pkg).version
+        count += 1
+        Console.three_colors "\n\n\tA new version of ", pkg,
+                             " is available!", 10, 14, 10
+      end
+    end
+    if count > 0
+      Console.three_colors "\n\nYou can use the ", "update <package-name>",
+                           " command if you want to update.\n\n", 8, 14, 8
+    end
+  end
+
 end
 
 def init
@@ -144,7 +159,24 @@ def prompt
     when 'restart' then
       restart
 
-    when /remove (.*)/ then
+    when 'check for update', 'check update' then
+      Sync.check_update
+
+    when /eval (.*)/
+      begin
+        eval $1.chomp
+      rescue
+        Console.alert "\n\tCannot eval #{$1}"
+      end
+
+    when /(p|print) (.*)/
+      begin
+        p eval $1.chomp
+      rescue
+        Console.alert "\n\tCannot eval #{$1}"
+      end
+
+    when /(rm|remove) (.*)/
       if Builder.to_install.delete($1)
         save_build_schema
         Console.success "\n\t#{$1} has been removed.\n"
@@ -188,13 +220,21 @@ def prompt
       end
 
     when /show all.*/, 'show' then
-      puts ""
+      Console.warning "\n\tDistant packages:"
       Packages.all.keys.sort_by{|a| a.downcase}.each do |pkg|
-        if Packages.locals.has_key?(pkg)
-          Console.success "\t#{pkg}"
-        else
-          Console.refutable "\t#{pkg}"
-        end
+        Console.refutable "\t #{pkg}"
+      end
+      Console.warning "\n\t#{REP_PATH}:"
+      Packages.local.keys.sort_by{|a| a.downcase}.each do |pkg|
+        Console.refutable "\t #{pkg}"
+      end
+      Console.warning "\n\t#{CUSTOM_PATH}:"
+      Packages.custom.keys.sort_by{|a| a.downcase}.each do |pkg|
+        Console.refutable "\t #{pkg}"
+      end
+      Console.warning "\n\tbuild_schema.rb:"
+      Builder.to_install.each do |name, type|
+        Console.refutable "\t #{name} #{(type == :inline) ? "(inline)" : ""}"
       end
 
     when 'update_according_schema', 'update *' then

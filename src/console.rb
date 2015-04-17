@@ -79,6 +79,16 @@ module Console
     SetColor.call(self.stdout, 0x0007|0)
   end
 
+  def three_colors(a, b, c, ca, cb, cc)
+    SetColor.call(self.stdout, ca|0)
+    print a
+    SetColor.call(self.stdout, cb|0)
+    print b
+    SetColor.call(self.stdout, cc|0)
+    print c
+    SetColor.call(self.stdout, 0x0007|0)
+  end
+
   def success(txt)
     puts_color(txt, 0x000a)
   end
@@ -137,6 +147,7 @@ module Console
   puts "\n\n"
   Kernel.sleep(0.5)
   SetColor.call(self.stdout, 0x0007)
+  Sync.check_update
 end
 
 end

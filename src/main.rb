@@ -22,7 +22,6 @@ Graphics.resize_screen(1, 1)
 SRC_PATH    = '../src'
 REP_PATH    = '../.local'
 REP_LIST    = REP_PATH + '/list.rb'
-REP_TRACE   = REP_PATH + '/trace.rb'
 CUSTOM_PATH = '../customPackages'
 S = ["rock", "paper", "scissors", "EX AEQUO", "YOU WIN", "YOU LOSE", 8, 10, 12, 0, 0]
 # Inner modules
@@ -59,7 +58,5 @@ unless File.exist?(SCHEMA)
   FileTools.write(SCHEMA, "")
 end
 Kernel.send(:require, SCHEMA)
-
-
 
 prompt

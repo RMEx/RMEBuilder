@@ -50,14 +50,30 @@ end
 
 module Packages
   class << self
-    attr_accessor :locals, :all
-
-    Packages.locals =
-      (File.exist?(REP_TRACE)) ?
-      (Hash[FileTools.eval_file(REP_TRACE).map {|k,v| [k, eval(v)]}]) : {}
+    attr_accessor :all, :local, :custom, :cache_schema
 
       def exist?(name)
-        list.has_key?(name)
+        list.has_key?(name) || custom.include?(name)
+      end
+
+      def get_local_schema(rep)
+        local = Dir.glob(rep + '/*/package.rb').map do |file|
+          name = file.split('/')[-2]
+          schema = eval FileTools.read(file)
+          [name, schema]
+        end
+      end
+
+      def download_schema(name)
+        package = Packages.all[name]
+        uri = package[:uri].clone
+        uri << package[:schema]
+        schema_content = uri.get
+        schema = eval(schema_content)
+      end
+
+      def get_distant_schema(name)
+        Packages.cache_schema[name] ||= download_schema(name)
       end
 
       def map
@@ -69,8 +85,13 @@ module Packages
           [name, {uri: Http.service_with(uri), schema: schema}]
         end
         Packages.all = Hash[list]
+        Packages.local = Hash[get_local_schema(REP_PATH)]
+        Packages.custom = Hash[get_local_schema(CUSTOM_PATH)]
       end
+
     end
+
+    Packages.cache_schema = Hash.new
     Packages.map
 end
 
@@ -118,9 +139,6 @@ class Package
         Console.success "\t#{full_name} is downloaded"
       end
       resolve_dependancies(schema, dep, update)
-      Packages.locals[name] = schema
-      rep = Hash[Packages.locals.map {|k, v| [k, schema_content]}]
-      FileTools.write(REP_TRACE, rep, 'w')
       Console.success "\n#{name} is downloaded !\n"
       puts ""
     end
@@ -137,21 +155,26 @@ class Package
       unless exist?(name)
         return Console.alert "\n\t#{name} is not in the package stack.\n"
       end
-      package = Packages.all[name]
-      uri = package[:uri].clone
-      uri << package[:schema]
-      schema_content = uri.get
-      schema = eval(schema_content)
-      Console.warning "\n\tName:"
-      Console.refutable "\t " + schema.name
-      Console.warning "\n\tDescription:"
-      Console.refutable "\t " + schema.description
-      Console.warning "\n\tAuthors:"
+      Console.warning "\n\tLocalisation:"
+      if Packages.custom.include?(name)
+        schema = Packages.custom[name]
+        Console.refutable "\t " + File.realpath(CUSTOM_PATH) + "/#{name}"
+      elsif Packages.local.include?(name)
+        schema = Packages.local[name]
+        Console.refutable "\t " + File.realpath(REP_PATH) + "/#{name}"
+      else
+        schema = Packages.get_distant_schema(name)
+        Console.refutable "\t " + Packages.list[name]
+      end
+      colors = [14, 8]
+      Console.two_colors "\n\tPackage name: ", schema.name, *colors
+      Console.two_colors "\n\n\tDescription:", "\n\t #{schema.description}", *colors
+      Console.warning "\n\n\tAuthors:"
       schema.authors.each do |nick, email|
-          desc = "\t #{nick} "
-          desc += "<#{email}>" if email.length > 2
-          desc += "\n"
-          Console.refutable desc
+        desc = "\t #{nick} "
+        desc += "<#{email}>" if email.length > 2
+        desc += "\n"
+        Console.refutable desc
       end
       Console.warning "\n\tComponents:"
       schema.components.each do |c_name|
