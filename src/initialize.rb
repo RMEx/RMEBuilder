@@ -27,7 +27,32 @@ class Builder
     Builder.to_install = {}
     Builder.stack_error = []
     Builder.schema_final = []
+  #end
+  def show_distant
+    Console.warning "\n\tDistant packages:"
+    Packages.all.keys.sort_by{|a| a.downcase}.each do |pkg|
+      Console.refutable "\t #{pkg}"
+    end
   end
+  def show_local
+    Console.warning "\n\t#{REP_PATH}:" unless Packages.local.empty?
+    Packages.local.keys.sort_by{|a| a.downcase}.each do |pkg|
+      Console.refutable "\t #{pkg}"
+    end
+  end
+  def show_custom
+    Console.warning "\n\t#{CUSTOM_PATH}:" unless Packages.custom.empty?
+    Packages.custom.keys.sort_by{|a| a.downcase}.each do |pkg|
+      Console.refutable "\t #{pkg}"
+    end
+  end
+  def show_schema
+    Console.warning "\n\tbuild_schema.rb:"
+    Builder.to_install.each do |name, type|
+      Console.refutable "\t #{name} #{(type == :inline) ? "(inline)" : ""}"
+    end
+  end
+end
 end
 
 module Kernel
@@ -60,13 +85,6 @@ module Kernel
   alias_method :append, :package
   def inline(name)
     [:inline, name]
-  end
-
-  def show_schema
-    puts "\n\tbuild-schema.rb:\n"
-    Builder.to_install.each do |name, type|
-      Console.refutable "\t#{name} #{(type == :inline) ? "(inline)" : ""}"
-    end
   end
 end
 
@@ -154,7 +172,7 @@ def prompt
     case result
 
     when 'schema', 'show schema' then
-      show_schema
+      Builder.show_schema
 
     when 'restart' then
       restart
@@ -171,18 +189,18 @@ def prompt
 
     when /(p|print) (.*)/
       begin
-        p eval $1.chomp
+        p eval $2.chomp
       rescue
-        Console.alert "\n\tCannot eval #{$1}"
+        Console.alert "\n\tCannot eval #{$2}"
       end
 
     when /(rm|remove) (.*)/
-      if Builder.to_install.delete($1)
+      if Builder.to_install.delete($2)
         save_build_schema
-        Console.success "\n\t#{$1} has been removed.\n"
-        show_schema
+        Console.success "\n\t#{$2} has been removed.\n"
+        Builder.show_schema
       else
-        Console.alert "\n\t#{$1} is not in the package stack.\n"
+        Console.alert "\n\t#{$2} is not in the package stack.\n"
       end
 
     when /move (.*) (up|down)/
@@ -197,7 +215,7 @@ def prompt
         Builder.to_install = Hash[a]
         save_build_schema
         Console.success "\n\t#{name} has been moved #{pos}.\n"
-        show_schema
+        Builder.show_schema
       else
         Console.alert "\n\t#{$1} is not in the package stack.\n"
       end
@@ -214,28 +232,16 @@ def prompt
       unless Builder.to_install.has_key?(name)
         Kernel.send(meth, res)
         Console.success "\n\t#{name} has been added.\n"
-        show_schema
+        Builder.show_schema
       else
         Console.warning "\n\t#{name} is already in the package list.\n"
       end
 
     when /show all.*/, 'show' then
-      Console.warning "\n\tDistant packages:"
-      Packages.all.keys.sort_by{|a| a.downcase}.each do |pkg|
-        Console.refutable "\t #{pkg}"
-      end
-      Console.warning "\n\t#{REP_PATH}:"
-      Packages.local.keys.sort_by{|a| a.downcase}.each do |pkg|
-        Console.refutable "\t #{pkg}"
-      end
-      Console.warning "\n\t#{CUSTOM_PATH}:"
-      Packages.custom.keys.sort_by{|a| a.downcase}.each do |pkg|
-        Console.refutable "\t #{pkg}"
-      end
-      Console.warning "\n\tbuild_schema.rb:"
-      Builder.to_install.each do |name, type|
-        Console.refutable "\t #{name} #{(type == :inline) ? "(inline)" : ""}"
-      end
+      Builder.show_distant
+      Builder.show_local
+      Builder.show_custom
+      Builder.show_schema
 
     when 'update_according_schema', 'update *' then
       Builder.to_install.each {|k| perform(k) do

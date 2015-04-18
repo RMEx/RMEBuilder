@@ -62,7 +62,10 @@ module Packages
           schema = eval FileTools.read(file)
           [name, schema]
         end
+        Hash[local]
       end
+      def local; get_local_schema(REP_PATH); end
+      def custom; get_local_schema(CUSTOM_PATH); end
 
       def download_schema(name)
         package = Packages.all[name]
@@ -85,8 +88,6 @@ module Packages
           [name, {uri: Http.service_with(uri), schema: schema}]
         end
         Packages.all = Hash[list]
-        Packages.local = Hash[get_local_schema(REP_PATH)]
-        Packages.custom = Hash[get_local_schema(CUSTOM_PATH)]
       end
 
     end
@@ -140,7 +141,6 @@ class Package
       end
       resolve_dependancies(schema, dep, update)
       Console.success "\n#{name} is downloaded !\n"
-      Builder.show_local
       puts ""
     end
 
