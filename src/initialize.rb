@@ -100,7 +100,6 @@ module Sync
   def from_funkywork
     return unless Http.connected?
     header  = "\# Loaded from #{FW_LIST.uri(true)} at #{Time.now}\n"
-    Console.success header
     list    = FW_LIST.get
     File.open(REP_LIST, 'w') do |file|
       file.write(header + list)
