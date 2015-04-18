@@ -98,7 +98,9 @@ module Sync
   extend self
 
   def from_funkywork
+    return unless Http.connected?
     header  = "\# Loaded from #{FW_LIST.uri(true)} at #{Time.now}\n"
+    Console.success header
     list    = FW_LIST.get
     File.open(REP_LIST, 'w') do |file|
       file.write(header + list)
@@ -106,6 +108,7 @@ module Sync
   end
 
   def check_update
+    return unless Http.connected?
     count = 0
     Packages.local.each do |pkg, data|
       if data.version != Packages.get_distant_schema(pkg).version
