@@ -140,6 +140,7 @@ class Package
       end
       resolve_dependancies(schema, dep, update)
       Console.success "\n#{name} is downloaded !\n"
+      Builder.show_local
       puts ""
     end
 
