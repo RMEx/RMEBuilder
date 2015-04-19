@@ -56,11 +56,11 @@ end
 end
 
 module Kernel
+
   def restart
-
-    raise RGSSReset.new
-
+    system('start "" "' + File.realpath('../bin/Game.exe') + '" console')
   end
+
   def force_update
     Builder.force_update = true
   end
