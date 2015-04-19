@@ -34,7 +34,7 @@ Utils.load('compiler.rb')
 Utils.load('initialize.rb')
 Utils.load('package.rb')
 
-CURRENT_VERSION = vsn(2, 1, 91)
+CURRENT_VERSION = vsn(2, 2, 0)
 ABOUT = [
   "RMEBuilder v.#{CURRENT_VERSION}",
   'Free software released under GNU Lesser General Public License',
@@ -54,6 +54,11 @@ TARGET = File.read("../last_waypoint.rb") rescue target_selection
 Console::SetFG.call(Console::GetConsole.call)
 SCRIPT_RVDATA = TARGET.addSlash+"Data/Scripts.rvdata2"
 SCHEMA        = TARGET.addSlash+'build_schema.rb'
+
+Builder.to_install = {}
+Builder.stack_error = []
+Builder.schema_final = []
+
 unless File.exist?(SCHEMA)
   FileTools.write(SCHEMA, "")
 end

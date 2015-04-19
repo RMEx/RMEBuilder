@@ -28,7 +28,7 @@ module Browser
   extend self
   def launch
     flags = 0x0000_0001|(0x0000_0010|0x0000_0040)
-    d = [HWND, 0, 0, "Chose a project folder".to_wsc, flags, 0, 0, 0].pack('LLLpLLl')
+    d = [Console::GetConsole.call, 0, 0, "Chose a project folder".to_wsc, flags, 0, 0, 0].pack('LLLpLLl')
     pidlist = SHBrowseForFolder.call(d)
     if pidlist == 0
       ''

@@ -57,10 +57,9 @@ end
 
 module Kernel
   def restart
-    path = 'start "" "' + File.realpath('../bin/Game.exe') + '" console'
-    Thread.new { system(path) }
-    sleep(0.1)
-    Process.exit!(true)
+
+    raise RGSSReset.new
+
   end
   def force_update
     Builder.force_update = true
