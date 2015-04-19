@@ -17,6 +17,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
 HWND = Win32API.new('user32', 'FindWindow', 'pp', 'i').call('RGSS Player', 0)
+Win32API.new('user32', 'DestroyWindow', 'i', 'i').call(HWND)
 
 module Browser
 
