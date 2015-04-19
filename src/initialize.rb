@@ -58,7 +58,8 @@ end
 module Kernel
 
   def restart
-    system('start "" "' + File.realpath('../bin/Game.exe') + '" console')
+    raise RGSSReset.new
+    #system('start "" "' + File.realpath('../bin/Game.exe') + '" console')
   end
 
   def force_update
@@ -126,7 +127,7 @@ end
 def init
   FileTools.safe_mkdir(REP_PATH)
   Sync.from_funkywork
-  Utils.load(REP_LIST)
+  Kernel.load(REP_LIST)
 end
 init
 

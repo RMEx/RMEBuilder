@@ -25,14 +25,14 @@ REP_LIST    = REP_PATH + '/list.rb'
 CUSTOM_PATH = '../customPackages'
 S = ["rock", "paper", "scissors", "EX AEQUO", "YOU WIN", "YOU LOSE", 8, 10, 12, 0, 0]
 # Inner modules
-Kernel.send(:require, SRC_PATH+'/utils.rb')
+Kernel.load(SRC_PATH+'/utils.rb')
 
-Utils.load('console.rb')
-Utils.load('http.rb')
-Utils.load('version.rb')
-Utils.load('compiler.rb')
-Utils.load('initialize.rb')
-Utils.load('package.rb')
+Kernel.load(SRC_PATH+'/console.rb')
+Kernel.load(SRC_PATH+'/http.rb')
+Kernel.load(SRC_PATH+'/version.rb')
+Kernel.load(SRC_PATH+'/compiler.rb')
+Kernel.load(SRC_PATH+'/initialize.rb')
+Kernel.load(SRC_PATH+'/package.rb')
 
 CURRENT_VERSION = vsn(2, 2, 1)
 ABOUT = [
@@ -40,6 +40,7 @@ ABOUT = [
   'Free software released under GNU Lesser General Public License',
   'Copyright (C) 2015 Nuki <xaviervdw AT gmail DOT com>',
   'Copyright (C) 2015 Joke <joke AT biloucorp DOT com>',
+  'Help : Grim, Zeus81, Hyperaho',
   '',
   'RMEBuilder is a featureful package manager for RPG Maker VX Ace',
   '',
@@ -58,6 +59,6 @@ SCHEMA        = TARGET.addSlash+'build_schema.rb'
 unless File.exist?(SCHEMA)
   FileTools.write(SCHEMA, "")
 end
-Kernel.send(:require, SCHEMA)
+Kernel.load(SCHEMA)
 
 prompt

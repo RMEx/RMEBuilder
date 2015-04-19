@@ -19,7 +19,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 Utils.define_exception :UnboundVersionException
 
-class Version < Struct.new(:major, :sub, :last)
+class Version
+  attr_accessor :major, :sub, :last
+  def initialize(major, sub, last)
+          @major, @sub, @last = major, sub, last
+  end
 
   def to_s
     "v #{major}.#{sub}.#{last}"
