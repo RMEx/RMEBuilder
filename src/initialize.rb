@@ -184,6 +184,11 @@ def prompt
     when 'restart' then
       restart
 
+    when 'version', 'vsn' then
+      print "\n\t"
+      Console.warning CURRENT_VERSION
+      print "\n"
+
     when 'check for update', 'check update' then
       Sync.check_update
 

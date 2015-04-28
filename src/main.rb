@@ -34,13 +34,13 @@ Kernel.load(SRC_PATH+'/compiler.rb')
 Kernel.load(SRC_PATH+'/initialize.rb')
 Kernel.load(SRC_PATH+'/package.rb')
 
-CURRENT_VERSION = vsn(2, 2, 2)
+CURRENT_VERSION = vsn(2, 2, 3)
 ABOUT = [
-  "RMEBuilder v.#{CURRENT_VERSION}",
+  "RMEBuilder #{CURRENT_VERSION}",
   'Free software released under GNU Lesser General Public License',
   'Copyright (C) 2015 Nuki <xaviervdw AT gmail DOT com>',
   'Copyright (C) 2015 Joke <joke AT biloucorp DOT com>',
-  'Help : Grim, Zeus81, Hyperaho',
+  'Help : Grim, Zeus81, Hyperaho, Ulis',
   '',
   'RMEBuilder is a featureful package manager for RPG Maker VX Ace',
   '',
