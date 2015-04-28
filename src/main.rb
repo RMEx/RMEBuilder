@@ -34,7 +34,7 @@ Kernel.load(SRC_PATH+'/compiler.rb')
 Kernel.load(SRC_PATH+'/initialize.rb')
 Kernel.load(SRC_PATH+'/package.rb')
 
-CURRENT_VERSION = vsn(2, 2, 1)
+CURRENT_VERSION = vsn(2, 2, 2)
 ABOUT = [
   "RMEBuilder v.#{CURRENT_VERSION}",
   'Free software released under GNU Lesser General Public License',
@@ -54,6 +54,7 @@ check_for_updates
 TARGET = File.read("../last_waypoint.rb") rescue target_selection
 Console::SetFG.call(Console::GetConsole.call)
 SCRIPT_RVDATA = TARGET.addSlash+"Data/Scripts.rvdata2"
+target_selection unless File.exist?(SCRIPT_RVDATA)
 SCHEMA        = TARGET.addSlash+'build_schema.rb'
 
 unless File.exist?(SCHEMA)

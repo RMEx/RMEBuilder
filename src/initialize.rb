@@ -145,10 +145,15 @@ end
 
 def target_selection
   if File.exist?("../last_waypoint.rb")
-    current = File.read("../last_waypoint.rb")
-    Console.refutable "\n\tCurrent target: \"#{current}\"\n"
-    Console.warning "\nChange the target ? (Y/N)"
-    return unless gets.chomp.upcase == "Y"
+    if File.exist?(SCRIPT_RVDATA)
+      current = File.read("../last_waypoint.rb")
+      Console.refutable "\n\tCurrent target: \"#{current}\"\n"
+      Console.warning "\nChange the target ? (Y/N)"
+      return unless gets.chomp.upcase == "Y"
+    else
+      current = File.read("../last_waypoint.rb")
+      Console.alert "\n#{current} is not a valid RPGMaker VXAce project"
+    end
   end
   Console.refutable "\nPlease chose a project folder..."
   result = Browser.launch.split('\\').join(File::SEPARATOR)
