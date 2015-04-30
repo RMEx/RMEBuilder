@@ -34,7 +34,7 @@ Kernel.load(SRC_PATH+'/compiler.rb')
 Kernel.load(SRC_PATH+'/initialize.rb')
 Kernel.load(SRC_PATH+'/package.rb')
 
-CURRENT_VERSION = vsn(2, 2, 3)
+CURRENT_VERSION = vsn(2, 2, 5)
 ABOUT = [
   "RMEBuilder #{CURRENT_VERSION}",
   'Free software released under GNU Lesser General Public License',
