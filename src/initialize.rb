@@ -199,6 +199,13 @@ def prompt
         Console.alert "\n\tCannot eval #{$1}"
       end
 
+    when /merge assets of (.*)/, /get assets of (.*)/
+      begin
+        Package.merge_assets($1)
+      rescue Exception => exc
+        Console.alert "\n\t#{$1} is not downloaded (or in the package stack)"
+      end
+
     when /(p|print) (.*)/
       begin
         p eval $2.chomp

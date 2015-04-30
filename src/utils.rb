@@ -127,6 +127,9 @@ end
 #==============================================================================
 
 module FileTools
+
+  CopyFile = Win32API.new('kernel32', 'CopyFile', 'PPI', 'I')
+
   extend self
 
   def write(file, str, flag = "w+")
@@ -140,6 +143,10 @@ module FileTools
   def copy(src, dst)
     k = read(src)
     write(dst, k)
+  end
+
+  def overkill_copy(src, dst)
+    CopyFile.call(src,dst,0)
   end
 
   def move(src, dst)

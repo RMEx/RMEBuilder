@@ -34,6 +34,7 @@ module Http
   HttpReadData            = Win32API.new('winhttp','WinHttpReadData','ppip','i')
   HttpCloseHandle         = Win32API.new('winhttp','WinHttpCloseHandle', 'p','i')
   ConnectionState         = Win32API.new('wininet','InternetGetConnectedState', 'ii', 'i')
+  URLDownloadToFile       = Win32API.new('urlmon', 'URLDownloadToFile', 'LPPLL', 'L')
 
   # Exception
   Utils.define_exception :HttpOpenException
@@ -48,6 +49,10 @@ module Http
 
     def connected?
       ConnectionState.call(0, 0) == 1
+    end
+
+    def download_file(from, to)
+      URLDownloadToFile.call(0, from, to, 0, 0).zero?
     end
 
     def open

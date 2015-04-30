@@ -17,6 +17,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
 Utils.define_exception :UnboundPackage
+Utils.define_exception :UndownloadPackage
 
 class Package
 
@@ -29,6 +30,7 @@ class Package
   attr_accessor :authors
   attr_accessor :uri
   attr_accessor :schema
+  attr_accessor :assets
 
   def initialize(hash)
     @name         = hash[:name]
@@ -38,6 +40,7 @@ class Package
     @exclude      = hash[:exclude]      || []
     @authors      = hash[:authors]      || {}
     @description  = hash[:description]  || ""
+    @assets       = hash[:assets]       || {}
   end
 
   def serialize
@@ -102,6 +105,40 @@ class Package
   class << self
     attr_accessor :s_insert_after
 
+    def merge_assets(package)
+      if Packages.custom.has_key?(package)
+        schema = Packages.custom[package]
+        path = CUSTOM_PATH
+      elsif Packages.local.has_key?(package)
+        schema = Packages.local[package]
+        path = REP_PATH
+      else
+        raise UndownloadPackage.new
+      end
+      puts ""
+      path = path.addSlash + package.addSlash
+      p path
+      asset = path + 'assets/'
+      schema.assets.each do |_, name|
+        n = asset + base_name(name)
+        name = name[1..-1] if name[0] == '/'
+        dest = TARGET.addSlash + name
+        FileTools.overkill_copy(n, dest)
+        Console.success "\t#{dest} is correctly copied "
+      end
+    end
+
+    def base_name(url)
+      url.split('/')[-1]
+    end
+
+    def true_name(url, uri)
+      return url if url[/^(http(s)?|ftp)\:\/\//]
+      f_uri = uri.clone
+      f_uri << url
+      f_uri.uri(true)
+    end
+
     def exist?(name)
       Packages.exist?(name)
     end
@@ -113,6 +150,7 @@ class Package
       Console.refutable "From #{Packages.list[name]}"
       FileTools.safe_mkdir(target)
       target = target.addSlash + name.addSlash
+      target_assets = target + 'assets/'
       if update
         Console.warning "\tSuppress #{target} for redownload"
         FileTools.safe_rmdir(target)
@@ -125,6 +163,8 @@ class Package
       end
       Console.success "\tCreate #{target}"
       Dir.mkdir(target)
+      Console.success "\tCreate #{target_assets}"
+      Dir.mkdir(target_assets)
       uri = package[:uri].clone
       uri << package[:schema]
       schema_content = uri.get
@@ -138,6 +178,26 @@ class Package
         k = init_uri.get.dup.force_encoding('utf-8')
         FileTools.write(full_name, k, 'w')
         Console.success "\t#{full_name} is downloaded"
+      end
+      Console.success "\tRetreive assets"
+      asset_error = 0
+      schema.assets.each do |file, target_file|
+        Console.refutable "\t download #{file} into #{target_assets}"
+        asset = true_name(file, package[:uri])
+        base_name = base_name(target_file)
+        dest = target_assets + base_name
+        begin
+          Http.download_file(asset.dup, dest.dup)
+          Console.success("\t#{file} is downloaded in #{dest}")
+        rescue Exception => exc
+          Console.alert("\t#{file} is not loaded for some reason")
+          asset_error += 1
+        end
+      end
+      if asset_error > 0
+        Console.alert("\n\tAll assets couldn't be retreived")
+      else
+        Console.success("\n\tAll assets are downloaded")
       end
       resolve_dependancies(schema, dep, update)
       Console.success "\n#{name} is downloaded !\n"
