@@ -61,93 +61,89 @@ module Console
   end
 
   def puts_color(txt, color)
-    SetColor.call(self.stdout, color|0)
+    SetColor.call(self.stdout, color)
     puts txt
-    SetColor.call(self.stdout, 0x0007|0)
+    SetColor.call(self.stdout, 7)
   end
 
   def print_color(txt, color)
-    SetColor.call(self.stdout, color|0)
+    SetColor.call(self.stdout, color)
     print txt
-    SetColor.call(self.stdout, 0x0007|0)
+    SetColor.call(self.stdout, 7)
   end
 
   def two_colors(a, b, ca, cb)
-    SetColor.call(self.stdout, ca|0)
+    SetColor.call(self.stdout, ca)
     print a
-    SetColor.call(self.stdout, cb|0)
+    SetColor.call(self.stdout, cb)
     print b
-    SetColor.call(self.stdout, 0x0007|0)
+    SetColor.call(self.stdout, 7)
   end
 
   def three_colors(a, b, c, ca, cb, cc)
-    SetColor.call(self.stdout, ca|0)
+    SetColor.call(self.stdout, ca)
     print a
-    SetColor.call(self.stdout, cb|0)
+    SetColor.call(self.stdout, cb)
     print b
-    SetColor.call(self.stdout, cc|0)
+    SetColor.call(self.stdout, cc)
     print c
-    SetColor.call(self.stdout, 0x0007|0)
+    SetColor.call(self.stdout, 7)
   end
 
   def success(txt)
-    puts_color(txt, 0x000a)
+    puts_color(txt, 10)
   end
 
   def alert(txt)
-    puts_color(txt, 0x000c)
+    puts_color(txt, 12)
   end
 
   def warning(txt)
-    puts_color(txt, 0x000e)
+    puts_color(txt, 14)
   end
 
   def refutable(txt)
-    puts_color(txt, 0x0008)
+    puts_color(txt, 8)
   end
 
   def show_logo
-    Kernel.sleep(0.5)
     load_rme =  '
-                       ___          ___          ___
-                      /\  \        /\  \        /\__\
-                     /::\  \      |::\  \      /:/ _/_
-                    /:/\:\__\     |:|:\  \    /:/ /\__\
-                   /:/ /:/  /   __|:|\:\  \  /:/ /:/ _/_
-                  /:/_/:/__/___/::::|_\:\__\/:/_/:/ /\__\
-                  \:\/:::::/  /\:\~~\  \/__/\:\/:/ /:/  /
-                   \::/~~/~~~~  \:\  \       \::/_/:/  /
-                    \:\~~\       \:\  \       \:\/:/  /
-                     \:\__\       \:\__\       \::/  /
-                      \/__/        \/__/        \/__/ '
+                        ___          ___          ___
+                       /\  \        /\  \        /\__\
+                      /::\  \      |::\  \      /:/ _/_
+                     /:/\:\__\     |:|:\  \    /:/ /\__\
+                    /:/ /:/  /   __|:|\:\  \  /:/ /:/ _/_
+                   /:/_/:/__/___/::::|_\:\__\/:/_/:/ /\__\
+                   \:\/:::::/  /\:\~~\  \/__/\:\/:/ /:/  /
+                    \::/~~/~~~~  \:\  \       \::/_/:/  /
+                     \:\~~\       \:\  \       \:\/:/  /
+                      \:\__\       \:\__\       \::/  /
+                       \/__/        \/__/        \/__/ '
   load_builder = '
-           __            _  __     __            ___      ___   ____
-          / /_   __  __ (_)/ /____/ /___   _____|__ \    <  /  / __ \
-         / __ \ / / / // // // __  // _ \ / ___/__/ /    / /  / / / /
-        / /_/ // /_/ // // // /_/ //  __// /   / __/ _  / /_ / /_/ /
-       /_.___/ \__,_//_//_/ \__,_/ \___//_/   /____/(_)/_/(_)\____/  '
+               __            _  __     __            ___      _  __
+              / /_   __  __ (_)/ /____/ /___   _____|__ \    | |/ /
+             / __ \ / / / // // // __  // _ \ / ___/__/ /    |   /
+            / /_/ // /_/ // // // /_/ //  __// /   / __/ _  /   |
+           /_.___/ \__,_//_//_/ \__,_/ \___//_/   /____/(_)/_/|_|  '
+  #http://patorjk.com/software/taag/#p=display&h=1&f=Slant&t=builder2.X
 
-  [0x0001, 0x0009, 0x0002, 0x000a, 0x000E, 0x000F, 0x000E, 0x000A].each do |i|
+  [1, 9, 2, 10].each do |i|
     clear
     SetColor.call(self.stdout, i)
     puts load_rme
     Kernel.sleep(0.05)
   end
-  [0x0001, 0x0005, 0x000D, 0x000C].each do |i|
+  [[14,1], [15,5], [14,13], [10,12]].each do |i|
     clear
-    SetColor.call(self.stdout,  0x000A)
+    SetColor.call(self.stdout,  i[0])
     puts load_rme
-    SetColor.call(self.stdout,  i)
+    SetColor.call(self.stdout,  i[1])
     puts load_builder
     Kernel.sleep(0.05)
   end
-  Kernel.sleep(0.5)
-  puts "\n"
-  SetColor.call(self.stdout, 0x0003)
-  puts "             This software is a free software released under LGPL\n\n\n"
-  puts "\n\n"
-  Kernel.sleep(0.5)
-  SetColor.call(self.stdout, 0x0007)
+  SetColor.call(self.stdout, 3)
+  puts "\n        (#{CURRENT_VERSION}) This software is a free software released under LGPL\n\n\n\n\n"
+  SetColor.call(self.stdout, 7)
   Sync.check_update
 end
 
