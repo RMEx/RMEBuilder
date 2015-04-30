@@ -117,14 +117,13 @@ class Package
       end
       puts ""
       path = path.addSlash + package.addSlash
-      p path
       asset = path + 'assets/'
       schema.assets.each do |_, name|
         n = asset + base_name(name)
         name = name[1..-1] if name[0] == '/'
         dest = TARGET.addSlash + name
         FileTools.overkill_copy(n, dest)
-        Console.success "\t#{dest} is correctly copied "
+        Console.success "\t#{name} is correctly copied "
       end
     end
 

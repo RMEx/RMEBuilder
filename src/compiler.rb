@@ -83,6 +83,7 @@ module Compiler
     package.dependancies.each do |dep|
       pack(:local, type, dep)
     end
+    propose_merge_assets(name, package)
     self.compiled_data[name] = compiled
   end
 
@@ -107,6 +108,18 @@ module Compiler
   def append_line(title, content)
     self.max_id += 1
     self.bytes << [self.max_id, title, deflate(content)]
+  end
+
+  def propose_merge_assets(name, package)
+    if package.assets.length > 0 then
+      Console.two_colors "\n\t#{name} ",  "has assets, would you like merge them with your project?", 0x000a, 0x000e
+      Console.warning "\t\tMerge it ? (Y/N)"
+      if gets.chomp.upcase == "Y"
+        Console.refutable "\n\tMerge assets"
+        Package.merge_assets(name)
+        puts ""
+      end
+    end
   end
 
   def make_bytes
