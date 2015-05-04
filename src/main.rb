@@ -17,7 +17,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 =end
 
-
 # Source folder
 SRC_PATH    = '../src'
 REP_PATH    = '../.local'
@@ -34,7 +33,7 @@ Kernel.load(SRC_PATH+'/compiler.rb')
 Kernel.load(SRC_PATH+'/initialize.rb')
 Kernel.load(SRC_PATH+'/package.rb')
 
-CURRENT_VERSION = vsn(2, 2, 6)
+CURRENT_VERSION = vsn(2, 2, 7)
 ABOUT = [
   "RMEBuilder #{CURRENT_VERSION}",
   'Free software released under GNU Lesser General Public License',
@@ -51,15 +50,14 @@ COMPONENTS = Dir.glob("#{SRC_PATH.addSlash}*.rb").map {|k| k.split('/').last}
 FileTools.write("../current_version.rb", CURRENT_VERSION.raw_inspect, flag = "w")
 FileTools.write("../components.rb", COMPONENTS.inspect, flag = "w")
 check_for_updates
-TARGET = File.read("../last_waypoint.rb") rescue target_selection
+TARGET = File.read("../last_waypoint.rb").dup.force_encoding('utf-8') rescue target_selection
 Console::SetFG.call(Console::GetConsole.call)
 SCRIPT_RVDATA = TARGET.addSlash+"Data/Scripts.rvdata2"
 target_selection unless File.exist?(SCRIPT_RVDATA)
 SCHEMA        = TARGET.addSlash+'build_schema.rb'
-
 unless File.exist?(SCHEMA)
-  FileTools.write(SCHEMA, "")
+  FileTools.write(SCHEMA, "# -*- coding: utf-8 -*-\n")
 end
-Kernel.load(SCHEMA)
+FileTools.eval_file(SCHEMA)
 
 prompt
