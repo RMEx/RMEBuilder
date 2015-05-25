@@ -152,7 +152,11 @@ class Package
       target_assets = target + 'assets/'
       if update
         Console.warning "\tSuppress #{target} for redownload"
-        FileTools.safe_rmdir(target)
+        begin
+          FileTools.safe_rmdir(target)
+        rescue Exception => exc
+          p exc
+        end
       else
         if Dir.exist?(target)
           Console.warning "\t#{target} already exist"

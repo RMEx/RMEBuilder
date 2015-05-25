@@ -156,8 +156,23 @@ module FileTools
 
   def safe_rmdir(d, v=false)
     if Dir.exist?(d)
-      remove_recursive(d, v)
+      begin delete_all(d)
+      rescue Errno::ENOTEMPTY
+      end
     end
+  end
+
+  def delete_all(dir)
+    Dir.foreach(dir) do |e|
+      next if [".",".."].include? e
+      fullname = dir + File::Separator + e
+      if FileTest::directory?(fullname)
+        delete_all(fullname)
+      else
+        File.delete(fullname)
+      end
+    end
+    Dir.delete(dir)
   end
 
   def safe_mkdir(d)
@@ -171,6 +186,7 @@ module FileTools
   end
 
   def remove_recursive(dir, verbose=false)
+    return unless Dir.exist?(dir)
     d = Dir.glob(dir.addSlash+'*')
     if d.length > 0
       d.each do |entry|
@@ -182,11 +198,17 @@ module FileTools
         end
       end
     else
+      begin
+        Dir.rmdir(dir)
+        puts "Suppress #{dir}" if verbose
+      rescue Errno::ENOTEMPTY
+      end
+    end
+    begin
       Dir.rmdir(dir)
       puts "Suppress #{dir}" if verbose
+    rescue Errno::ENOTEMPTY
     end
-    Dir.rmdir(dir)
-    puts "Suppress #{dir}" if verbose
   end
 end
 
