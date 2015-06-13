@@ -305,7 +305,10 @@ def prompt
       FileTools.remove_recursive(REP_PATH, true)
       init
 
-    when /ah!?.*/i then Console.warning "\n\tDoes that mean that women can't build a hut ?\n\n"
+    when 'about' then puts ''; ABOUT.each {|line| Console.refutable "\t"+line}
+
+    when /about (.*)/
+      then Package.get_info($1)
 
     when /build\s*(.*)/ then
       f = $1 == "dev"
@@ -337,10 +340,7 @@ def prompt
       Console.print_color("\n\t"+S[3+b=(S.index(result)-a)%3], S[6+b])
       Console.print_color(" [#{S[9] += b%2}-#{S[10] += b/2}]\n", 8)
 
-    when 'about' then puts ''; ABOUT.each {|line| Console.refutable "\t"+line}
-
-    when /about (.*)/
-      then Package.get_info($1)
+    when /ah!?.*/i then Console.warning "\n\tDoes that mean that women can't build a hut ?\n\n"
 
     when '--help', 'help', 'h' then
       puts ""
