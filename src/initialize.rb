@@ -310,8 +310,9 @@ def prompt
     when /about (.*)/
       then Package.get_info($1)
 
-    when /build\s*(.*)/ then
-      f = $1 == "dev"
+    when /build(\s.*)?$/ then
+      Console.alert $1.to_s.strip == "dev"
+      f = $1.to_s.strip == "dev"
       Builder.stack_error = []
       Builder.schema_final = []
       Builder.to_install.each do |name, type|
