@@ -1,3 +1,5 @@
+[Rejoignez-nous sur Discord !](https://discord.gg/yRUZcdQ)
+
 # [![RMEx](http://rmex.github.io/images/rmex-shortcut.png)](http://rmex.github.io) [RMEBuilder V2](http://rmex.github.io/RMEBuilder/)
 > RMEBuilder V2 est un outil simple pour faciliter le **téléchargement**, l'**installation**, la **mise à jour**, le **partage** et le **développement** de scripts et **collections de scripts RGSS3** (RPG Maker VX Ace).
 Ce projet est actuellement maintenu par [RMEx](https://github.com/RMEx). Cependant, le code source de l'application est libre, sous licence **LGPL**, et à ce titre, toute contribution est la bienvenue.
