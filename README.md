@@ -1,3 +1,5 @@
+## Deprecated
+
 [Rejoignez-nous sur Discord !](https://discord.gg/yRUZcdQ)
 
 # [![RMEx](http://rmex.github.io/images/rmex-shortcut.png)](http://rmex.github.io) [RMEBuilder V2](http://rmex.github.io/RMEBuilder/)
